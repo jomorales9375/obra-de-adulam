@@ -2,12 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const DonatePage = () => {
-  const [showMailInfo, setShowMailInfo] = React.useState(false);
-
-  const handlePayPalDonation = () => {
-    // Implementation of handlePayPalDonation
-  };
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
@@ -44,7 +38,6 @@ const DonatePage = () => {
                 o configurar donaciones recurrentes.
               </p>
               <button 
-                onClick={handlePayPalDonation}
                 className="bg-[#03346E] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 w-full"
               >
                 Donar Ahora
