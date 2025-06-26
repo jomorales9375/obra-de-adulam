@@ -1,7 +1,7 @@
 import React from 'react';
 
 const VisitUsPage = () => {
-  const churchAddress = "14550 River Road, Carmel, IN 46033";
+  const churchAddress = "4 Marina Way, Richmond, CA 94806";
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(churchAddress)}`;
 
   return (
@@ -31,8 +31,8 @@ const VisitUsPage = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Dirección</h3>
                       <p className="text-gray-700">
-                        14550 River Road<br />
-                        Carmel, IN 46033<br />
+                        4 Marina Way<br />
+                        Richmond, CA 94806<br />
                         Estados Unidos
                       </p>
                     </div>
@@ -41,13 +41,13 @@ const VisitUsPage = () => {
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Horarios de Servicios</h3>
                       <div className="space-y-2">
                         <p className="text-gray-700">
-                          <strong>Domingo:</strong> 9:00 AM & 11:00 AM
+                          <strong>Domingo:</strong> 3:00 PM
                         </p>
                         <p className="text-gray-700">
-                          <strong>Miércoles:</strong> 6:30 PM (Reunión de Jóvenes)
+                          <strong>Martes:</strong> 7:00 PM (Reunión de Varones)
                         </p>
                         <p className="text-gray-700">
-                          <strong>Viernes:</strong> 7:00 PM (Noche de Oración)
+                          <strong>Viernes:</strong> 7:00 PM (Reunión de Mujeres)
                         </p>
                       </div>
                     </div>
@@ -55,9 +55,6 @@ const VisitUsPage = () => {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Contacto</h3>
                       <div className="space-y-2">
-                        <p className="text-gray-700">
-                          <strong>Teléfono:</strong> (317) 900-7200
-                        </p>
                         <p className="text-gray-700">
                           <strong>Correo:</strong> info@obradeadulam.org
                         </p>
@@ -128,7 +125,7 @@ const VisitUsPage = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <p className="text-gray-600">Mapa de Google Maps</p>
-                      <p className="text-sm text-gray-500">14550 River Road, Carmel, IN 46033</p>
+                      <p className="text-sm text-gray-500">4 Marina Way, Richmond, CA 94806</p>
                     </div>
                   </div>
 
@@ -151,8 +148,8 @@ const VisitUsPage = () => {
                 <div className="bg-gray-50 rounded-lg p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Transporte Público</h3>
                   <div className="space-y-3 text-sm text-gray-700">
-                    <p><strong>Autobús:</strong> Línea 19 - Parada en River Road</p>
-                    <p><strong>Bicicleta:</strong> Carril bici disponible en River Road</p>
+                    <p><strong>Autobús:</strong> Línea 19 - Parada en Marina Way</p>
+                    <p><strong>Bicicleta:</strong> Carril bici disponible en Marina Way</p>
                     <p><strong>Estacionamiento:</strong> Gratuito en el campus de la iglesia</p>
                   </div>
                 </div>
@@ -171,9 +168,6 @@ const VisitUsPage = () => {
             no dudes en contactarnos. ¡Estamos aquí para ayudarte!
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button className="bg-white text-gray-900 px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition duration-300">
-              Llamar: (317) 900-7200
-            </button>
             <button className="bg-transparent text-white px-8 py-3 rounded-md font-semibold border border-white hover:bg-white hover:text-gray-900 transition duration-300">
               Enviar Correo
             </button>

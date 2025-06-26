@@ -189,19 +189,19 @@ const Layout = ({ children }) => {
               <h4 className="text-lg font-semibold mb-4">Recursos</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition duration-300">
+                  <button className="text-gray-300 hover:text-white transition duration-300 bg-transparent border-none p-0 text-left">
                     Descarga Nuestra App
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition duration-300">
+                  <button className="text-gray-300 hover:text-white transition duration-300 bg-transparent border-none p-0 text-left">
                     Archivo de Sermones
-                  </a>
+                  </button>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition duration-300">
+                  <button className="text-gray-300 hover:text-white transition duration-300 bg-transparent border-none p-0 text-left">
                     Actualización Semanal
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
