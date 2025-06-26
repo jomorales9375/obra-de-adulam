@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { SECURITY_CONFIG } from '../config/security';
+import { 
+  sanitizeInput, 
+  validateEmail, 
+  validatePhone, 
+  validateName, 
+  validatePrayerRequest,
+  checkRateLimit 
+} from '../utils/validation';
 
 const PrayerRequestPage = () => {
   const [formData, setFormData] = useState({
@@ -9,34 +18,87 @@ const PrayerRequestPage = () => {
     request: '',
     isConfidential: false
   });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate name
+    if (!validateName(formData.name)) {
+      newErrors.name = 'Por favor ingresa un nombre válido (2-50 caracteres)';
+    }
+    
+    // Validate email (optional but if provided, must be valid)
+    if (formData.email && !validateEmail(formData.email)) {
+      newErrors.email = 'Por favor ingresa un correo electrónico válido';
+    }
+    
+    // Validate phone (optional but if provided, must be valid)
+    if (formData.phone && !validatePhone(formData.phone)) {
+      newErrors.phone = 'Por favor ingresa un número de teléfono válido';
+    }
+    
+    // Validate prayer request
+    if (!validatePrayerRequest(formData.request)) {
+      newErrors.request = 'La petición de oración debe tener entre 10 y 1000 caracteres';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const sanitizedValue = type === 'checkbox' ? checked : sanitizeInput(value);
+    
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: sanitizedValue
     }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+    
+    // Check rate limiting
+    const userIdentifier = formData.email || 'anonymous';
+    if (!checkRateLimit(userIdentifier, 5, 60000)) { // 5 requests per minute
+      setSubmitStatus('rate_limit');
+      return;
+    }
+    
     setIsSubmitting(true);
     setSubmitStatus(null);
 
     try {
       const result = await emailjs.send(
-        'YOUR_SERVICE_ID', // Replace with your service ID
-        'YOUR_TEMPLATE_ID', // Replace with your template ID
+        SECURITY_CONFIG.EMAILJS.SERVICE_ID,
+        SECURITY_CONFIG.EMAILJS.TEMPLATE_ID,
         {
           from_name: formData.name,
           from_email: formData.email,
           from_phone: formData.phone,
           prayer_request: formData.request,
-          is_confidential: formData.isConfidential ? 'Sí' : 'No'
+          is_confidential: formData.isConfidential ? 'Sí' : 'No',
+          timestamp: new Date().toISOString(),
+          user_agent: navigator.userAgent
         },
-        'YOUR_PUBLIC_KEY' // Replace with your public key
+        SECURITY_CONFIG.EMAILJS.PUBLIC_KEY
       );
 
       console.log('SUCCESS!', result.text);
@@ -93,6 +155,14 @@ const PrayerRequestPage = () => {
                   </div>
                 )}
 
+                {submitStatus === 'rate_limit' && (
+                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-yellow-800">
+                      Has enviado demasiadas peticiones. Por favor espera un momento antes de intentar de nuevo.
+                    </p>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -104,8 +174,13 @@ const PrayerRequestPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.name ? 'border-red-300' : 'border-gray-300'
+                      }`}
                     />
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                    )}
                   </div>
 
                   <div>
@@ -117,8 +192,13 @@ const PrayerRequestPage = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.email ? 'border-red-300' : 'border-gray-300'
+                      }`}
                     />
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    )}
                   </div>
 
                   <div>
@@ -130,8 +210,13 @@ const PrayerRequestPage = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.phone ? 'border-red-300' : 'border-gray-300'
+                      }`}
                     />
+                    {errors.phone && (
+                      <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                    )}
                   </div>
 
                   <div>
@@ -144,9 +229,14 @@ const PrayerRequestPage = () => {
                       onChange={handleChange}
                       required
                       rows="6"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.request ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="Comparte tu petición de oración aquí..."
                     ></textarea>
+                    {errors.request && (
+                      <p className="mt-1 text-sm text-red-600">{errors.request}</p>
+                    )}
                   </div>
 
                   <div className="flex items-start space-x-3">
