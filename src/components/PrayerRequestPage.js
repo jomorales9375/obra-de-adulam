@@ -21,7 +21,6 @@ const PrayerRequestPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
@@ -81,12 +80,10 @@ const PrayerRequestPage = () => {
     // Check rate limiting
     const userIdentifier = formData.email || 'anonymous';
     if (!checkRateLimit(userIdentifier, 5, 60000)) { // 5 requests per minute
-      setSubmitStatus('rate_limit');
       return;
     }
     
     setIsSubmitting(true);
-    setSubmitStatus(null);
 
     try {
       const result = await emailjs.send(
@@ -105,7 +102,6 @@ const PrayerRequestPage = () => {
       );
 
       console.log('SUCCESS!', result.text);
-      setSubmitStatus('success');
       setFormData({
         name: '',
         email: '',
@@ -116,7 +112,6 @@ const PrayerRequestPage = () => {
       setShowSuccessModal(true);
     } catch (error) {
       console.log('FAILED...', error.text);
-      setSubmitStatus('error');
       setShowErrorModal(true);
     } finally {
       setIsSubmitting(false);

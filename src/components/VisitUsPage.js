@@ -2,11 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const VisitUsPage = () => {
-  const churchAddress = "4 Marina Way, Richmond, CA 94806";
-  const serviceTime = "Domingos a las 3:00 PM";
-  const phoneNumber = "(555) 123-4567";
-  const email = "info@obradeadulam.org";
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
