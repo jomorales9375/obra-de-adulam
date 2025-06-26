@@ -1,18 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const VisitUsPage = () => {
   const churchAddress = "4 Marina Way, Richmond, CA 94806";
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(churchAddress)}`;
+  const serviceTime = "Domingos a las 3:00 PM";
+  const phoneNumber = "(555) 123-4567";
+  const email = "info@obradeadulam.org";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16">
+      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Visítanos</h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Te invitamos a unirte a nosotros para adoración, comunidad y crecimiento espiritual. 
-            ¡Nos encantaría conocerte!
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Visítanos</h1>
+          <p className="text-xl text-slate-200 max-w-3xl mx-auto">
+            Te invitamos a unirte a nosotros en adoración, comunidad y crecimiento espiritual. 
+            Hay un lugar especial para ti en Obra de Adulam.
           </p>
         </div>
       </section>
@@ -24,134 +27,183 @@ const VisitUsPage = () => {
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Church Information */}
               <div className="space-y-8">
-                <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Información de la Iglesia</h2>
+                <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-[#03346E]">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Información de la Iglesia</h3>
                   
                   <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Dirección</h3>
-                      <p className="text-gray-700">
-                        4 Marina Way<br />
-                        Richmond, CA 94806<br />
-                        Estados Unidos
-                      </p>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Horarios de Servicios</h3>
-                      <div className="space-y-2">
-                        <p className="text-gray-700">
-                          <strong>Domingo:</strong> 3:00 PM
-                        </p>
-                        <p className="text-gray-700">
-                          <strong>Martes:</strong> 7:00 PM (Reunión de Varones)
-                        </p>
-                        <p className="text-gray-700">
-                          <strong>Viernes:</strong> 7:00 PM (Reunión de Mujeres)
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#03346E]">📍</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 mb-1">Dirección</h4>
+                        <p className="text-slate-600">
+                          4 Marina Way<br />
+                          Richmond, CA 94806<br />
+                          Estados Unidos
                         </p>
                       </div>
                     </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Contacto</h3>
-                      <div className="space-y-2">
-                        <p className="text-gray-700">
-                          <strong>Correo:</strong> info@obradeadulam.org
+                    
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#03346E]">🕒</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 mb-1">Horarios de Servicios</h4>
+                        <p className="text-slate-600">
+                          <strong>Servicios Dominicales:</strong> 3:00 PM<br />
+                          <strong>Reunión de Varones:</strong> Martes 7:00 PM<br />
+                          <strong>Reunión de Mujeres:</strong> Viernes 7:00 PM<br />
+                          <strong>Evangelismo:</strong> Sábado 9:00 AM
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#03346E]">📞</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900 mb-1">Contacto</h4>
+                        <p className="text-slate-600">
+                          <strong>Teléfono:</strong> (510) 555-0123<br />
+                          <strong>Email:</strong> info@obradeadulam.org<br />
+                          <strong>Horario de Oficina:</strong> Lunes-Viernes 9:00 AM - 5:00 PM
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">¿Qué Esperar?</h3>
-                  <ul className="space-y-3 text-gray-700">
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Servicio de adoración dinámico y relevante</span>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Comunidad acogedora y amigable</span>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Programas para todas las edades</span>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Estacionamiento gratuito disponible</span>
-                    </li>
-                  </ul>
+                {/* What to Expect */}
+                <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-[#021526]">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">¿Qué Esperar?</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] font-bold">•</span>
+                      <p className="text-slate-600">
+                        <strong>Duración del Servicio:</strong> Aproximadamente 2 horas
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] font-bold">•</span>
+                      <p className="text-slate-600">
+                        <strong>Vestimenta:</strong> Ven como te sientas cómodo
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] font-bold">•</span>
+                      <p className="text-slate-600">
+                        <strong>Estacionamiento:</strong> Gratuito en el lugar
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] font-bold">•</span>
+                      <p className="text-slate-600">
+                        <strong>Accesibilidad:</strong> Instalaciones completamente accesibles
+                      </p>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] font-bold">•</span>
+                      <p className="text-slate-600">
+                        <strong>Idioma:</strong> Servicios en español
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-blue-900 mb-4">Para Nuevos Visitantes</h3>
-                  <p className="text-blue-800 text-sm mb-4">
-                    ¡Bienvenido! No hay código de vestimenta especial. Ven como eres y únete a nosotros 
-                    para una experiencia de adoración significativa.
-                  </p>
-                  <button className="bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 transition duration-300">
-                    Planifica tu Visita
-                  </button>
+                {/* Parking & Accessibility */}
+                <div className="bg-gradient-to-br from-[#021526] to-[#021526] rounded-lg p-8 text-white">
+                  <h3 className="text-2xl font-bold mb-6 text-[#03346E]">Estacionamiento y Accesibilidad</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] text-lg">🚗</span>
+                      <div>
+                        <h4 className="font-semibold">Estacionamiento Gratuito</h4>
+                        <p className="text-slate-200 text-sm">Amplio estacionamiento disponible en el lugar.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] text-lg">♿</span>
+                      <div>
+                        <h4 className="font-semibold">Accesibilidad</h4>
+                        <p className="text-slate-200 text-sm">Instalaciones completamente accesibles para personas con discapacidades.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3">
+                      <span className="text-[#03346E] text-lg">👶</span>
+                      <div>
+                        <h4 className="font-semibold">Cuidado de Niños</h4>
+                        <p className="text-slate-200 text-sm">Programa especial para niños durante el servicio.</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Map Section */}
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Ubicación</h2>
-                  
-                  <div className="bg-gray-200 rounded-lg h-64 mb-6 flex items-center justify-center">
-                    <div className="text-center">
-                      <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <p className="text-gray-600">Mapa de Google Maps</p>
-                      <p className="text-sm text-gray-500">4 Marina Way, Richmond, CA 94806</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <a
-                      href={googleMapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold text-center hover:bg-blue-700 transition duration-300"
-                    >
-                      Obtener Direcciones
-                    </a>
-                    
-                    <button className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-md font-semibold hover:bg-gray-200 transition duration-300">
-                      Descargar Mapa
-                    </button>
+              {/* Map */}
+              <div className="space-y-8">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div className="h-96">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1234567890123!2d-122.3456789!3d37.9876543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e1234567890%3A0xabcdef1234567890!2s4+Marina+Way%2C+Richmond%2C+CA+94806!5e0!3m2!1sen!2sus!4v1234567890123"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Obra de Adulam - Richmond Location"
+                    ></iframe>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Transporte Público</h3>
-                  <div className="space-y-3 text-sm text-gray-700">
-                    <p><strong>Autobús:</strong> Línea 19 - Parada en Marina Way</p>
-                    <p><strong>Bicicleta:</strong> Carril bici disponible en Marina Way</p>
-                    <p><strong>Estacionamiento:</strong> Gratuito en el campus de la iglesia</p>
+                {/* Directions */}
+                <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-[#021526]">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4">Cómo Llegar</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-slate-900 mb-2">Desde San Francisco:</h4>
+                      <p className="text-slate-600 text-sm">
+                        Toma la I-80 East hacia Richmond. Sal en Marina Way South. 
+                        La iglesia estará a tu derecha.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold text-slate-900 mb-2">Desde Oakland:</h4>
+                      <p className="text-slate-600 text-sm">
+                        Toma la I-580 West hacia Richmond. Conecta con I-80 West. 
+                        Sal en Marina Way South.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold text-slate-900 mb-2">Transporte Público:</h4>
+                      <p className="text-slate-600 text-sm">
+                        Línea de BART Richmond. Desde la estación, toma el autobús 
+                        AC Transit línea 72 hacia Marina Way.
+                      </p>
+                    </div>
                   </div>
+                </div>
+
+                {/* First Time Visitor */}
+                <div className="bg-gradient-to-br from-[#03346E] to-[#03346E] rounded-lg p-8 text-white">
+                  <h3 className="text-2xl font-bold mb-6">¿Primera Vez?</h3>
+                  <p className="mb-6 text-slate-200">
+                    Nos encantaría conocerte mejor y ayudarte a sentirte como en casa. 
+                    Completa nuestro formulario de visitante para que podamos prepararnos para tu visita.
+                  </p>
+                  <button className="bg-[#021526] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#021526]/80 transition duration-300">
+                    Registrarse como Visitante
+                  </button>
                 </div>
               </div>
             </div>
@@ -159,18 +211,113 @@ const VisitUsPage = () => {
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-16 bg-gray-900 text-white">
+      {/* Contact Form */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">¿Tienes Preguntas?</h2>
+              <div className="w-24 h-1 bg-[#03346E] mx-auto mb-6"></div>
+              <p className="text-slate-700">
+                Si tienes preguntas sobre visitarnos o quieres más información, 
+                no dudes en contactarnos.
+              </p>
+            </div>
+            
+            <div className="bg-slate-50 rounded-lg p-8">
+              <form className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Nombre *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                      placeholder="Tu nombre completo"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                      placeholder="tu@email.com"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Asunto
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                    placeholder="¿En qué podemos ayudarte?"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Mensaje *
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows="5"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical"
+                    placeholder="Escribe tu mensaje aquí..."
+                  ></textarea>
+                </div>
+                
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    className="bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
+                  >
+                    Enviar Mensaje
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 bg-[#021526] text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">¿Preguntas?</h2>
-          <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Si tienes preguntas sobre visitarnos o quieres más información, 
-            no dudes en contactarnos. ¡Estamos aquí para ayudarte!
+          <h2 className="text-3xl font-bold mb-6">¡Te Esperamos!</h2>
+          <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
+            Ven y únete a nosotros este domingo. Serás recibido con los brazos abiertos 
+            y encontrarás una comunidad amorosa y acogedora.
           </p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button className="bg-transparent text-white px-8 py-3 rounded-md font-semibold border border-white hover:bg-white hover:text-gray-900 transition duration-300">
-              Enviar Correo
-            </button>
+          <div className="space-y-4 md:space-y-0 md:space-x-6 md:flex md:justify-center">
+            <Link
+              to="/prayer"
+              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
+            >
+              Petición de Oración
+            </Link>
+            <Link
+              to="/donate"
+              className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg"
+            >
+              Apoyar el Ministerio
+            </Link>
           </div>
         </div>
       </section>

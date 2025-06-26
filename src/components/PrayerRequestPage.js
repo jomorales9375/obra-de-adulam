@@ -9,6 +9,7 @@ import {
   validatePrayerRequest,
   checkRateLimit 
 } from '../utils/validation';
+import { Link } from 'react-router-dom';
 
 const PrayerRequestPage = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,8 @@ const PrayerRequestPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -110,22 +113,25 @@ const PrayerRequestPage = () => {
         request: '',
         isConfidential: false
       });
+      setShowSuccessModal(true);
     } catch (error) {
       console.log('FAILED...', error.text);
       setSubmitStatus('error');
+      setShowErrorModal(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16">
+      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Peticiones de Oración</h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Nos encantaría orar por ti. Comparte tu petición de oración y nuestro equipo de oración se compromete a interceder por ti.
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Peticiones de Oración</h1>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+            Estamos aquí para orar contigo. Tu petición será tratada con confidencialidad 
+            y será compartida con nuestro equipo de oración dedicado.
           </p>
         </div>
       </section>
@@ -136,186 +142,180 @@ const PrayerRequestPage = () => {
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12">
               {/* Prayer Request Form */}
-              <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Enviar Petición de Oración</h2>
-                
-                {submitStatus === 'success' && (
-                  <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-                    <p className="text-green-800">
-                      ¡Gracias! Tu petición de oración ha sido enviada. Nuestro equipo de oración orará por ti.
-                    </p>
-                  </div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-red-800">
-                      Lo sentimos, hubo un error al enviar tu petición. Por favor intenta de nuevo o contáctanos directamente.
-                    </p>
-                  </div>
-                )}
-
-                {submitStatus === 'rate_limit' && (
-                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <p className="text-yellow-800">
-                      Has enviado demasiadas peticiones. Por favor espera un momento antes de intentar de nuevo.
-                    </p>
-                  </div>
-                )}
+              <div className="bg-white rounded-lg shadow-xl p-8 md:p-12">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-slate-900 mb-4">Envía tu Petición de Oración</h2>
+                  <div className="w-24 h-1 bg-[#03346E] mx-auto mb-6"></div>
+                  <p className="text-slate-700">
+                    Estamos aquí para orar contigo. Tu petición será tratada con confidencialidad 
+                    y será compartida con nuestro equipo de oración.
+                  </p>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.name ? 'border-red-300' : 'border-gray-300'
-                      }`}
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                    )}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Nombre *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                        placeholder="Tu nombre completo"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                        placeholder="tu@email.com"
+                      />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Correo Electrónico
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.email ? 'border-red-300' : 'border-gray-300'
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Teléfono
+                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Teléfono (opcional)
                     </label>
                     <input
                       type="tel"
+                      id="phone"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.phone ? 'border-red-300' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                      placeholder="(123) 456-7890"
                     />
-                    {errors.phone && (
-                      <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                    )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="requestType" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Tipo de Petición *
+                    </label>
+                    <select
+                      id="requestType"
+                      name="requestType"
+                      value={formData.requestType}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                    >
+                      <option value="">Selecciona una opción</option>
+                      <option value="salud">Salud</option>
+                      <option value="familia">Familia</option>
+                      <option value="trabajo">Trabajo</option>
+                      <option value="finanzas">Finanzas</option>
+                      <option value="relacion">Relación</option>
+                      <option value="espiritual">Crecimiento Espiritual</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="prayerRequest" className="block text-sm font-semibold text-slate-700 mb-2">
                       Petición de Oración *
                     </label>
                     <textarea
-                      name="request"
-                      value={formData.request}
+                      id="prayerRequest"
+                      name="prayerRequest"
+                      value={formData.prayerRequest}
                       onChange={handleChange}
                       required
                       rows="6"
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.request ? 'border-red-300' : 'border-gray-300'
-                      }`}
-                      placeholder="Comparte tu petición de oración aquí..."
+                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical"
+                      placeholder="Describe tu petición de oración aquí..."
                     ></textarea>
-                    {errors.request && (
-                      <p className="mt-1 text-sm text-red-600">{errors.request}</p>
-                    )}
                   </div>
 
                   <div className="flex items-start space-x-3">
                     <input
                       type="checkbox"
-                      name="isConfidential"
-                      checked={formData.isConfidential}
+                      id="confidential"
+                      name="confidential"
+                      checked={formData.confidential}
                       onChange={handleChange}
-                      className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      className="mt-1 h-4 w-4 text-[#03346E] focus:ring-[#03346E] border-slate-300 rounded"
                     />
-                    <label className="text-sm text-gray-700">
-                      Marca esta casilla si prefieres que tu petición sea confidencial y solo sea compartida con nuestro equipo de oración.
+                    <label htmlFor="confidential" className="text-sm text-slate-600">
+                      Marca esta casilla si prefieres que tu petición sea completamente confidencial 
+                      y solo sea compartida con el pastor.
                     </label>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? 'Enviando...' : 'Enviar Petición de Oración'}
-                  </button>
+                  <div className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      id="followUp"
+                      name="followUp"
+                      checked={formData.followUp}
+                      onChange={handleChange}
+                      className="mt-1 h-4 w-4 text-[#03346E] focus:ring-[#03346E] border-slate-300 rounded"
+                    />
+                    <label htmlFor="followUp" className="text-sm text-slate-600">
+                      Me gustaría recibir seguimiento sobre mi petición de oración.
+                    </label>
+                  </div>
+
+                  <div className="pt-6">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-[#03346E] text-white py-4 px-6 rounded-md font-semibold hover:bg-[#03346E]/80 disabled:bg-slate-400 disabled:cursor-not-allowed transition duration-300 text-lg"
+                    >
+                      {isSubmitting ? 'Enviando...' : 'Enviar Petición de Oración'}
+                    </button>
+                  </div>
                 </form>
               </div>
 
               {/* Information Sidebar */}
               <div className="space-y-8">
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">¿Cómo Funciona?</h3>
-                  <ul className="space-y-3 text-gray-700">
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Envía tu petición usando el formulario</span>
+                <div className="bg-[#03346E]/10 rounded-lg p-6 border-l-4 border-[#03346E]">
+                  <h3 className="text-xl font-semibold text-[#021526] mb-4">¿Cómo Funciona?</h3>
+                  <ul className="space-y-3 text-slate-700">
+                    <li className="flex items-start">
+                      <span className="text-[#03346E] mr-2">✓</span>
+                      Tu petición es recibida por nuestro equipo de oración
                     </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Nuestro equipo de oración recibe tu petición</span>
+                    <li className="flex items-start">
+                      <span className="text-[#03346E] mr-2">✓</span>
+                      Oramos por ti durante la semana
                     </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Oramos por ti durante la semana</span>
+                    <li className="flex items-start">
+                      <span className="text-[#03346E] mr-2">✓</span>
+                      Te contactamos si proporcionaste información de contacto
                     </li>
-                    <li className="flex items-start space-x-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center mt-0.5">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <span>Te contactamos si proporcionas información de contacto</span>
+                    <li className="flex items-start">
+                      <span className="text-[#03346E] mr-2">✓</span>
+                      Continuamos orando hasta que veamos respuestas
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-blue-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-blue-900 mb-4">Privacidad</h3>
-                  <p className="text-blue-800 text-sm">
-                    Todas las peticiones de oración son tratadas con confidencialidad. 
-                    Solo nuestro equipo de oración dedicado tendrá acceso a tu información.
-                  </p>
-                </div>
-
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Otras Formas de Contacto</h3>
-                  <div className="space-y-3 text-sm text-gray-700">
-                    <p><strong>Teléfono:</strong> (317) 900-7200</p>
-                    <p><strong>Correo:</strong> oracion@obradeadulam.org</p>
-                    <p><strong>En Persona:</strong> Durante nuestros servicios dominicales</p>
+                <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-[#03346E]">
+                  <h3 className="text-xl font-semibold text-[#021526] mb-4">Versículos de Esperanza</h3>
+                  <div className="space-y-4 text-slate-700">
+                    <blockquote className="italic border-l-4 border-[#03346E] pl-4">
+                      "No se inquieten por nada; más bien, en toda ocasión, con oración y ruego, 
+                      presenten sus peticiones a Dios y denle gracias." - Filipenses 4:6
+                    </blockquote>
+                    <blockquote className="italic border-l-4 border-[#03346E] pl-4">
+                      "Porque donde dos o tres se reúnen en mi nombre, allí estoy yo en medio de ellos." - Mateo 18:20
+                    </blockquote>
                   </div>
                 </div>
               </div>
@@ -323,6 +323,72 @@ const PrayerRequestPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Contact Information */}
+      <section className="py-16 bg-[#021526] text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">¿Necesitas Hablar con Alguien?</h2>
+          <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
+            Si necesitas hablar con alguien en persona o tienes una emergencia, 
+            no dudes en contactarnos directamente.
+          </p>
+          <div className="space-y-4 md:space-y-0 md:space-x-6 md:flex md:justify-center">
+            <Link
+              to="/visit"
+              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
+            >
+              Visítanos
+            </Link>
+            <button className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg">
+              Llamar al Pastor
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">✅</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">¡Petición Enviada!</h3>
+            <p className="text-slate-600 mb-6">
+              Tu petición de oración ha sido enviada exitosamente. 
+              Nuestro equipo de oración comenzará a orar por ti inmediatamente.
+            </p>
+            <button 
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full bg-[#03346E] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">❌</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Error al Enviar</h3>
+            <p className="text-slate-600 mb-6">
+              Hubo un problema al enviar tu petición. Por favor, intenta nuevamente 
+              o contacta directamente con la iglesia.
+            </p>
+            <button 
+              onClick={() => setShowErrorModal(false)}
+              className="w-full bg-[#021526] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#021526]/80 transition duration-300"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
