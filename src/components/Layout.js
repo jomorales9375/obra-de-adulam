@@ -1,136 +1,164 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
+  // Handle scroll effect for navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-gray-900 text-white shadow-lg">
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled 
+          ? 'bg-white/90 backdrop-blur-md shadow-lg border-b border-gray-200/20' 
+          : 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900'
+      }`}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
-            <Link to="/" className="text-2xl font-bold">
-              Obra de Adulam
+            <Link to="/" className="group">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <span className="text-white font-bold text-lg">O</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className={`text-xl font-bold transition-colors duration-300 ${
+                    isScrolled ? 'text-gray-900' : 'text-white'
+                  }`}>
+                    Obra de Adulam
+                  </span>
+                  <span className={`text-xs transition-colors duration-300 ${
+                    isScrolled ? 'text-gray-600' : 'text-gray-300'
+                  }`}>
+                    Iglesia Cristiana
+                  </span>
+                </div>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              <Link
-                to="/"
-                className={`hover:text-gray-300 transition duration-300 ${
-                  isActive('/') ? 'text-white border-b-2 border-white' : 'text-gray-300'
-                }`}
-              >
-                INICIO
-              </Link>
-              <Link
-                to="/about"
-                className={`hover:text-gray-300 transition duration-300 ${
-                  isActive('/about') ? 'text-white border-b-2 border-white' : 'text-gray-300'
-                }`}
-              >
-                ACERCA DE
-              </Link>
-              <Link
-                to="/prayer"
-                className={`hover:text-gray-300 transition duration-300 ${
-                  isActive('/prayer') ? 'text-white border-b-2 border-white' : 'text-gray-300'
-                }`}
-              >
-                ORACIÓN
-              </Link>
-              <Link
-                to="/visit"
-                className={`hover:text-gray-300 transition duration-300 ${
-                  isActive('/visit') ? 'text-white border-b-2 border-white' : 'text-gray-300'
-                }`}
-              >
-                VISÍTANOS
-              </Link>
-              <Link
-                to="/donate"
-                className={`hover:text-gray-300 transition duration-300 ${
-                  isActive('/donate') ? 'text-white border-b-2 border-white' : 'text-gray-300'
-                }`}
-              >
-                DAR
-              </Link>
+            <nav className="hidden md:flex space-x-1">
+              {[
+                { path: '/', label: 'INICIO', icon: '🏠' },
+                { path: '/about', label: 'ACERCA DE', icon: 'ℹ️' },
+                { path: '/prayer', label: 'ORACIÓN', icon: '🙏' },
+                { path: '/visit', label: 'VISÍTANOS', icon: '📍' },
+                { path: '/donate', label: 'DAR', icon: '💝' }
+              ].map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`relative px-4 py-2 rounded-lg transition-all duration-300 group ${
+                    isActive(item.path)
+                      ? isScrolled
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-white/20 text-white backdrop-blur-sm'
+                      : isScrolled
+                        ? 'text-gray-700 hover:bg-gray-100'
+                        : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {item.icon}
+                    </span>
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  
+                  {/* Active indicator */}
+                  {isActive(item.path) && (
+                    <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full ${
+                      isScrolled ? 'bg-blue-600' : 'bg-white'
+                    }`}></div>
+                  )}
+                  
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </Link>
+              ))}
             </nav>
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden text-white"
+              className={`md:hidden p-2 rounded-lg transition-all duration-300 ${
+                isScrolled 
+                  ? 'text-gray-700 hover:bg-gray-100' 
+                  : 'text-white hover:bg-white/10'
+              }`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              <div className="relative w-6 h-6">
+                <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMenuOpen ? 'rotate-45 translate-y-2' : '-translate-y-1'
+                }`}></span>
+                <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-0' : 'opacity-100'
+                }`}></span>
+                <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMenuOpen ? '-rotate-45 -translate-y-2' : 'translate-y-1'
+                }`}></span>
+              </div>
             </button>
           </div>
 
           {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <nav className="md:hidden py-4 border-t border-gray-700">
-              <div className="flex flex-col space-y-4">
-                <Link
-                  to="/"
-                  className={`px-4 py-2 rounded-md transition duration-300 ${
-                    isActive('/') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  INICIO
-                </Link>
-                <Link
-                  to="/about"
-                  className={`px-4 py-2 rounded-md transition duration-300 ${
-                    isActive('/about') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  ACERCA DE
-                </Link>
-                <Link
-                  to="/prayer"
-                  className={`px-4 py-2 rounded-md transition duration-300 ${
-                    isActive('/prayer') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  ORACIÓN
-                </Link>
-                <Link
-                  to="/visit"
-                  className={`px-4 py-2 rounded-md transition duration-300 ${
-                    isActive('/visit') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  VISÍTANOS
-                </Link>
-                <Link
-                  to="/donate"
-                  className={`px-4 py-2 rounded-md transition duration-300 ${
-                    isActive('/donate') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  DAR
-                </Link>
+          <div className={`md:hidden overflow-hidden transition-all duration-500 ${
+            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}>
+            <nav className="py-4 border-t border-gray-700/30">
+              <div className="flex flex-col space-y-2">
+                {[
+                  { path: '/', label: 'INICIO', icon: '🏠' },
+                  { path: '/about', label: 'ACERCA DE', icon: 'ℹ️' },
+                  { path: '/prayer', label: 'ORACIÓN', icon: '🙏' },
+                  { path: '/visit', label: 'VISÍTANOS', icon: '📍' },
+                  { path: '/donate', label: 'DAR', icon: '💝' }
+                ].map((item, index) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                      isActive(item.path)
+                        ? isScrolled
+                          ? 'bg-blue-600 text-white shadow-lg'
+                          : 'bg-white/20 text-white backdrop-blur-sm'
+                        : isScrolled
+                          ? 'text-gray-700 hover:bg-gray-100'
+                          : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span className="font-medium">{item.label}</span>
+                    {isActive(item.path) && (
+                      <div className={`ml-auto w-2 h-2 rounded-full ${
+                        isScrolled ? 'bg-blue-600' : 'bg-white'
+                      }`}></div>
+                    )}
+                  </Link>
+                ))}
               </div>
             </nav>
-          )}
+          </div>
         </div>
       </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-20"></div>
 
       {/* Main Content */}
       <main className="flex-grow">

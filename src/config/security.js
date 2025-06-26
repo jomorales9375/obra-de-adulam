@@ -46,6 +46,6 @@ export const RATE_LIMIT_CONFIG = {
 // Input validation patterns
 export const VALIDATION_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PHONE: /^[\+]?[1-9][\d]{0,15}$/,
+  PHONE: /^[+]?[1-9][\d]{0,15}$/,
   NAME: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{2,50}$/,
 }; 
