@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './components/HomePage';
@@ -7,7 +7,36 @@ import PrayerRequestPage from './components/PrayerRequestPage';
 import VisitUsPage from './components/VisitUsPage';
 import './App.css';
 
-function AboutPage() {
+const AboutPage = React.memo(() => {
+  const beliefs = useMemo(() => [
+    {
+      title: "Dones Ministeriales",
+      content: "Creemos en la existencia de los regalos del hijo de Dios para su pueblo, denominados como dones ministeriales, que están funcionando hasta que todos lleguemos a la unidad de la fe y del conocimiento pleno del hijo de Dios — a la condición de un hombre maduro, a la medida de la estatura de la plenitud de Cristo. Estos dones son gracias depositadas en vasos humanos que se denominan de la siguiente manera: Apóstoles, Profetas, Evangelistas, Pastores y Maestros."
+    },
+    {
+      title: "Cinco Ministerios Primarios",
+      content: "Creemos que estos cinco ministerios primarios están en función en la actualidad y son constituidos por Dios, y no por designación humana. Estos ejercen la función de coberturas ministeriales sobre el cuerpo de Cristo."
+    },
+    {
+      title: "Cobertura Apostólica",
+      content: "Creemos que no debe haber oveja sin pastor y pastor sin cobertura apostólica. Creemos que la cobertura de los ministerios auténticos del Señor ministran bendición, protección y orden dentro del cuerpo de Cristo que es su iglesia (Is. 4:5 y 6)."
+    },
+    {
+      title: "Salvos del Reino vs Iglesia del Señor",
+      content: "Establecemos la diferencia entre los salvos del Reino y la Iglesia del Señor, determinando que los aspectos de cobertura ministerial no influirán en la salvación eterna del creyente, pero sí en su función en el cuerpo de Cristo, si es parte del mismo."
+    },
+    {
+      title: "Señal de Autoridad",
+      content: "Creemos que la mujer cristiana debe tener señal de autoridad sobre su cabeza en el momento de la oración y ejecución de los dones del Espíritu (I Co. 11:5 y 6). Esta cubierta creemos que es la imposición de un velo, por causa de los ángeles (verso 10). Este velo difiere del velo natural que es el cabello, por la razón de que debe ser usado solamente para orar o profetizar."
+    }
+  ], []);
+
+  const [openAccordion, setOpenAccordion] = React.useState(0);
+
+  const toggleAccordion = useCallback((index) => {
+    setOpenAccordion(prev => prev === index ? -1 : index);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-16">
@@ -32,65 +61,38 @@ function AboutPage() {
               y donde la fe crezca a través de la comunidad, el servicio y la adoración.
             </p>
             
-            <div className="grid md:grid-cols-2 gap-8 mt-12">
-              <div className="bg-gray-50 p-8 rounded-lg">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Nuestros Valores</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            <div className="mt-12">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Nuestras Creencias Fundamentales</h3>
+              <div className="space-y-4">
+                {beliefs.map((belief, index) => (
+                  <div key={index} className="bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                    <button
+                      onClick={() => toggleAccordion(index)}
+                      className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <span className="font-semibold text-gray-900 text-lg">{belief.title}</span>
+                      <svg
+                        className={`w-5 h-5 text-gray-600 transform transition-transform duration-200 ${
+                          openAccordion === index ? 'rotate-180' : ''
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </span>
-                    <span>Comunidad Inclusiva</span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    <span>Servicio a Otros</span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    <span>Crecimiento Espiritual</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="bg-gray-50 p-8 rounded-lg">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Involúcrate</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    <span>Grupos de Vida</span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    <span>Estudiantes de Adulam</span>
-                  </li>
-                  <li className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </span>
-                    <span>Alcance Comunitario</span>
-                  </li>
-                </ul>
+                    </button>
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        openAccordion === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="px-6 pb-4">
+                        <p className="text-gray-700 leading-relaxed">{belief.content}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -98,9 +100,11 @@ function AboutPage() {
       </div>
     </div>
   );
-}
+});
 
-function App() {
+AboutPage.displayName = 'AboutPage';
+
+const App = React.memo(() => {
   return (
     <Router>
       <Layout>
@@ -114,6 +118,8 @@ function App() {
       </Layout>
     </Router>
   );
-}
+});
+
+App.displayName = 'App';
 
 export default App;

@@ -16,8 +16,8 @@ const PrayerRequestPage = () => {
     name: '',
     email: '',
     phone: '',
-    request: '',
-    isConfidential: false
+    requestType: '',
+    prayerRequest: ''
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,8 +43,8 @@ const PrayerRequestPage = () => {
     }
     
     // Validate prayer request
-    if (!validatePrayerRequest(formData.request)) {
-      newErrors.request = 'La petición de oración debe tener entre 10 y 1000 caracteres';
+    if (!validatePrayerRequest(formData.prayerRequest)) {
+      newErrors.prayerRequest = 'La petición de oración debe tener entre 10 y 1000 caracteres';
     }
     
     setErrors(newErrors);
@@ -86,18 +86,25 @@ const PrayerRequestPage = () => {
     setIsSubmitting(true);
 
     try {
+      // Prepare email data - exclude personal info if confidential
+      const emailData = {
+        prayer_request: formData.prayerRequest,
+        request_type: formData.requestType,
+        is_confidential: 'No',
+        wants_followup: 'No',
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent
+      };
+
+      // Only include personal info if not confidential
+      emailData.from_name = formData.name;
+      emailData.from_email = formData.email;
+      emailData.from_phone = formData.phone;
+
       const result = await emailjs.send(
         SECURITY_CONFIG.EMAILJS.SERVICE_ID,
         SECURITY_CONFIG.EMAILJS.TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          from_phone: formData.phone,
-          prayer_request: formData.request,
-          is_confidential: formData.isConfidential ? 'Sí' : 'No',
-          timestamp: new Date().toISOString(),
-          user_agent: navigator.userAgent
-        },
+        emailData,
         SECURITY_CONFIG.EMAILJS.PUBLIC_KEY
       );
 
@@ -106,8 +113,8 @@ const PrayerRequestPage = () => {
         name: '',
         email: '',
         phone: '',
-        request: '',
-        isConfidential: false
+        requestType: '',
+        prayerRequest: ''
       });
       setShowSuccessModal(true);
     } catch (error) {
@@ -236,35 +243,6 @@ const PrayerRequestPage = () => {
                     ></textarea>
                   </div>
 
-                  <div className="flex items-start space-x-3">
-                    <input
-                      type="checkbox"
-                      id="confidential"
-                      name="confidential"
-                      checked={formData.confidential}
-                      onChange={handleChange}
-                      className="mt-1 h-4 w-4 text-[#03346E] focus:ring-[#03346E] border-slate-300 rounded"
-                    />
-                    <label htmlFor="confidential" className="text-sm text-slate-600">
-                      Marca esta casilla si prefieres que tu petición sea completamente confidencial 
-                      y solo sea compartida con el pastor.
-                    </label>
-                  </div>
-
-                  <div className="flex items-start space-x-3">
-                    <input
-                      type="checkbox"
-                      id="followUp"
-                      name="followUp"
-                      checked={formData.followUp}
-                      onChange={handleChange}
-                      className="mt-1 h-4 w-4 text-[#03346E] focus:ring-[#03346E] border-slate-300 rounded"
-                    />
-                    <label htmlFor="followUp" className="text-sm text-slate-600">
-                      Me gustaría recibir seguimiento sobre mi petición de oración.
-                    </label>
-                  </div>
-
                   <div className="pt-6">
                     <button
                       type="submit"
@@ -334,9 +312,12 @@ const PrayerRequestPage = () => {
             >
               Visítanos
             </Link>
-            <button className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg">
-              Llamar al Pastor
-            </button>
+            <a 
+              href="mailto:pastor@obradeadulam.org?subject=Consulta%20Pastoral&body=Hola,%20me%20gustaría%20hablar%20con%20usted%20sobre%20un%20asunto%20importante.%0A%0AGracias."
+              className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg"
+            >
+              Enviar Email
+            </a>
           </div>
         </div>
       </section>

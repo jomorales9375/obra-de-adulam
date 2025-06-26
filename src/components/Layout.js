@@ -31,11 +31,11 @@ const Layout = ({ children }) => {
             {/* Logo */}
             <Link to="/" className="group">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden border-2 border-[#03346E]">
+                <div className="w-12 h-12 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden">
                   <img 
                     src="/Adulam Logo.jpg" 
                     alt="Obra de Adulam Logo" 
-                    className="w-12 h-12 object-cover rounded-full"
+                    className="w-12 h-12 object-cover"
                   />
                 </div>
                 <div className="flex flex-col">
@@ -45,7 +45,7 @@ const Layout = ({ children }) => {
                     Obra de Adulam
                   </span>
                   <span className={`text-xs transition-colors duration-300 ${
-                    isScrolled ? 'text-slate-600' : 'text-[#03346E]'
+                    isScrolled ? 'text-slate-600' : 'text-white'
                   }`}>
                     Ministerios Sobre El Final De Los Tiempos
                   </span>
@@ -56,11 +56,11 @@ const Layout = ({ children }) => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-1">
               {[
-                { path: '/', label: 'INICIO', icon: '🏠' },
-                { path: '/about', label: 'ACERCA DE', icon: 'ℹ️' },
-                { path: '/prayer', label: 'ORACIÓN', icon: '🙏' },
-                { path: '/visit', label: 'VISÍTANOS', icon: '📍' },
-                { path: '/donate', label: 'DAR', icon: '💝' }
+                { path: '/', label: 'INICIO' },
+                { path: '/about', label: 'ACERCA DE' },
+                { path: '/prayer', label: 'ORACIÓN' },
+                { path: '/visit', label: 'VISÍTANOS' },
+                { path: '/donate', label: 'DAR' }
               ].map((item) => (
                 <Link
                   key={item.path}
@@ -76,9 +76,6 @@ const Layout = ({ children }) => {
                   }`}
                 >
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {item.icon}
-                    </span>
                     <span className="font-medium">{item.label}</span>
                   </div>
                   
@@ -125,11 +122,11 @@ const Layout = ({ children }) => {
             <nav className="py-4 border-t border-slate-700/30">
               <div className="flex flex-col space-y-2">
                 {[
-                  { path: '/', label: 'INICIO', icon: '🏠' },
-                  { path: '/about', label: 'ACERCA DE', icon: 'ℹ️' },
-                  { path: '/prayer', label: 'ORACIÓN', icon: '🙏' },
-                  { path: '/visit', label: 'VISÍTANOS', icon: '📍' },
-                  { path: '/donate', label: 'DAR', icon: '💝' }
+                  { path: '/', label: 'INICIO' },
+                  { path: '/about', label: 'ACERCA DE' },
+                  { path: '/prayer', label: 'ORACIÓN' },
+                  { path: '/visit', label: 'VISÍTANOS' },
+                  { path: '/donate', label: 'DAR' }
                 ].map((item, index) => (
                   <Link
                     key={item.path}
@@ -146,7 +143,6 @@ const Layout = ({ children }) => {
                     onClick={() => setIsMenuOpen(false)}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <span className="text-lg">{item.icon}</span>
                     <span className="font-medium">{item.label}</span>
                     {isActive(item.path) && (
                       <div className={`ml-auto w-2 h-2 rounded-full ${
