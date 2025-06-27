@@ -33,7 +33,7 @@ const HomePage = () => {
               e.target.currentTime = 0; // Start from beginning
             }}
           >
-            <source src="/videos/church-background-compressed.mp4" type="video/mp4" />
+            <source src="/videos/church-background-optimized.mp4" type="video/mp4" />
           </video>
           <video
             ref={videoRef2}
@@ -45,7 +45,7 @@ const HomePage = () => {
               e.target.currentTime = 30; // Start 30 seconds in
             }}
           >
-            <source src="/videos/church-background-compressed.mp4" type="video/mp4" />
+            <source src="/videos/church-background-optimized.mp4" type="video/mp4" />
           </video>
         </div>
         
