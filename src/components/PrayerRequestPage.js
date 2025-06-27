@@ -23,6 +23,7 @@ const PrayerRequestPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validateForm = () => {
     const newErrors = {};
@@ -32,14 +33,19 @@ const PrayerRequestPage = () => {
       newErrors.name = 'Por favor ingresa un nombre válido (2-50 caracteres)';
     }
     
-    // Validate email (optional but if provided, must be valid)
-    if (formData.email && !validateEmail(formData.email)) {
+    // Validate email (required)
+    if (!formData.email || !validateEmail(formData.email)) {
       newErrors.email = 'Por favor ingresa un correo electrónico válido';
     }
     
     // Validate phone (optional but if provided, must be valid)
     if (formData.phone && !validatePhone(formData.phone)) {
       newErrors.phone = 'Por favor ingresa un número de teléfono válido';
+    }
+    
+    // Validate request type (required)
+    if (!formData.requestType) {
+      newErrors.requestType = 'Por favor selecciona un tipo de petición';
     }
     
     // Validate prayer request
@@ -53,13 +59,18 @@ const PrayerRequestPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    const sanitizedValue = type === 'checkbox' ? checked : sanitizeInput(value);
-    
+    let sanitizedValue;
+    if (name === 'prayerRequest') {
+      sanitizedValue = value; // Don't sanitize on every keystroke for textarea
+    } else {
+      sanitizedValue = type === 'checkbox' ? checked : sanitizeInput(value);
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: sanitizedValue
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -71,35 +82,64 @@ const PrayerRequestPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Submitting form...');
     
     // Validate form
     if (!validateForm()) {
+      console.log('Validation failed');
       return;
     }
+    console.log('Validation passed');
     
     // Check rate limiting
     const userIdentifier = formData.email || 'anonymous';
     if (!checkRateLimit(userIdentifier, 5, 60000)) { // 5 requests per minute
+      console.log('Rate limit hit');
       return;
     }
+    console.log('Rate limit passed');
     
     setIsSubmitting(true);
 
     try {
-      // Prepare email data - exclude personal info if confidential
+      // Debug: Log EmailJS configuration
+      console.log('EmailJS Configuration:');
+      console.log('Service ID:', SECURITY_CONFIG.EMAILJS.SERVICE_ID);
+      console.log('Template ID:', SECURITY_CONFIG.EMAILJS.TEMPLATE_ID);
+      console.log('Public Key:', SECURITY_CONFIG.EMAILJS.PUBLIC_KEY ? '***' + SECURITY_CONFIG.EMAILJS.PUBLIC_KEY.slice(-4) : 'NOT SET');
+      
+      // Check if EmailJS credentials are properly configured
+      if (SECURITY_CONFIG.EMAILJS.SERVICE_ID === 'YOUR_SERVICE_ID' || 
+          SECURITY_CONFIG.EMAILJS.TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || 
+          SECURITY_CONFIG.EMAILJS.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        throw new Error('EmailJS credentials not configured. Please set up your .env file with proper EmailJS credentials.');
+      }
+
+      // Prepare email data with ALL form fields
       const emailData = {
-        prayer_request: formData.prayerRequest,
-        request_type: formData.requestType,
-        is_confidential: 'No',
-        wants_followup: 'No',
-        timestamp: new Date().toISOString(),
-        user_agent: navigator.userAgent
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || 'No proporcionado',
+        requestType: formData.requestType,
+        prayerRequest: formData.prayerRequest,
+        time: new Date().toLocaleString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        // Alternative template variables (common EmailJS template names)
+        user_name: formData.name,
+        user_email: formData.email,
+        user_phone: formData.phone || 'No proporcionado',
+        message: formData.prayerRequest,
+        subject: `Petición de Oración - ${formData.requestType}`,
+        from_name: formData.name,
+        from_email: formData.email
       };
 
-      // Only include personal info if not confidential
-      emailData.from_name = formData.name;
-      emailData.from_email = formData.email;
-      emailData.from_phone = formData.phone;
+      console.log('Sending to EmailJS with data:', emailData);
 
       const result = await emailjs.send(
         SECURITY_CONFIG.EMAILJS.SERVICE_ID,
@@ -108,7 +148,7 @@ const PrayerRequestPage = () => {
         SECURITY_CONFIG.EMAILJS.PUBLIC_KEY
       );
 
-      console.log('SUCCESS!', result.text);
+      console.log('EmailJS SUCCESS!', result);
       setFormData({
         name: '',
         email: '',
@@ -118,8 +158,30 @@ const PrayerRequestPage = () => {
       });
       setShowSuccessModal(true);
     } catch (error) {
-      console.log('FAILED...', error.text);
+      console.error('EmailJS FAILED...', error);
+      console.error('Error details:', {
+        message: error.message,
+        text: error.text,
+        status: error.status,
+        response: error.response
+      });
+      
+      // Show more specific error message
+      let errorMessage = 'Error al enviar la petición. Por favor, intenta nuevamente.';
+      
+      if (error.message && error.message.includes('credentials not configured')) {
+        errorMessage = 'Error de configuración: Las credenciales de EmailJS no están configuradas correctamente.';
+      } else if (error.status === 400) {
+        errorMessage = 'Error 400: Verifica que las variables del template coincidan con los datos enviados.';
+      } else if (error.status === 401) {
+        errorMessage = 'Error 401: Clave pública de EmailJS inválida.';
+      } else if (error.status === 404) {
+        errorMessage = 'Error 404: Service ID o Template ID no encontrado.';
+      }
+      
+      console.error('User-friendly error:', errorMessage);
       setShowErrorModal(true);
+      setErrorMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -167,9 +229,14 @@ const PrayerRequestPage = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                        className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                          errors.name ? 'border-red-500' : 'border-slate-300'
+                        }`}
                         placeholder="Tu nombre completo"
                       />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                      )}
                     </div>
                     
                     <div>
@@ -183,9 +250,14 @@ const PrayerRequestPage = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                        className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                          errors.email ? 'border-red-500' : 'border-slate-300'
+                        }`}
                         placeholder="tu@email.com"
                       />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                      )}
                     </div>
                   </div>
 
@@ -199,9 +271,14 @@ const PrayerRequestPage = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                        errors.phone ? 'border-red-500' : 'border-slate-300'
+                      }`}
                       placeholder="(123) 456-7890"
                     />
+                    {errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                    )}
                   </div>
 
                   <div>
@@ -214,7 +291,9 @@ const PrayerRequestPage = () => {
                       value={formData.requestType}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
+                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                        errors.requestType ? 'border-red-500' : 'border-slate-300'
+                      }`}
                     >
                       <option value="">Selecciona una opción</option>
                       <option value="salud">Salud</option>
@@ -225,6 +304,9 @@ const PrayerRequestPage = () => {
                       <option value="espiritual">Crecimiento Espiritual</option>
                       <option value="otro">Otro</option>
                     </select>
+                    {errors.requestType && (
+                      <p className="text-red-500 text-sm mt-1">{errors.requestType}</p>
+                    )}
                   </div>
 
                   <div>
@@ -238,9 +320,14 @@ const PrayerRequestPage = () => {
                       onChange={handleChange}
                       required
                       rows="6"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical"
+                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical ${
+                        errors.prayerRequest ? 'border-red-500' : 'border-slate-300'
+                      }`}
                       placeholder="Describe tu petición de oración aquí..."
                     ></textarea>
+                    {errors.prayerRequest && (
+                      <p className="text-red-500 text-sm mt-1">{errors.prayerRequest}</p>
+                    )}
                   </div>
 
                   <div className="pt-6">
@@ -353,8 +440,7 @@ const PrayerRequestPage = () => {
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-4">Error al Enviar</h3>
             <p className="text-slate-600 mb-6">
-              Hubo un problema al enviar tu petición. Por favor, intenta nuevamente 
-              o contacta directamente con la iglesia.
+              {errorMessage}
             </p>
             <button 
               onClick={() => setShowErrorModal(false)}
