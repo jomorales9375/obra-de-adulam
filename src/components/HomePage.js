@@ -267,14 +267,14 @@ const HomePage = () => {
       </section>
 
       {/* Social Media Section - Black */}
-      <section className="py-20 relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
+      <section className="py-20 relative overflow-hidden bg-gradient-to-br from-[#021526] to-[#03346E]">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-5xl mx-auto relative flex flex-col lg:flex-row items-center lg:items-start">
             <div className="flex-1 w-full">
               <div className="text-center lg:text-left mb-16">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Síguenos en Redes Sociales</h2>
-                <div className="w-32 h-1 bg-gradient-to-r from-blue-300 to-blue-700 mx-auto lg:mx-0 mb-8"></div>
-                <p className="text-blue-100 text-xl leading-relaxed max-w-3xl mx-auto lg:mx-0">
+                <div className="w-32 h-1 bg-gradient-to-r from-[#03346E] to-[#1e40af] mx-auto lg:mx-0 mb-8"></div>
+                <p className="text-slate-200 text-xl leading-relaxed max-w-3xl mx-auto lg:mx-0">
                   Mantente conectado con nuestra comunidad a través de nuestras redes sociales
                 </p>
               </div>
@@ -290,7 +290,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-xl font-bold">YouTube</div>
-                    <div className="text-blue-100 text-base mb-2">Mira nuestros sermones, testimonios y contenido especial</div>
+                    <div className="text-slate-200 text-base mb-2">Mira nuestros sermones, testimonios y contenido especial</div>
                     <a 
                       href="https://www.youtube.com/@obradeadulam9857" 
                       target="_blank" 
@@ -312,7 +312,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-xl font-bold">Facebook</div>
-                    <div className="text-blue-100 text-base mb-2">Conecta con nuestra comunidad y mantente al día con eventos</div>
+                    <div className="text-slate-200 text-base mb-2">Conecta con nuestra comunidad y mantente al día con eventos</div>
                     <a 
                       href="https://www.facebook.com/profile.php?id=100093414965081" 
                       target="_blank" 
@@ -334,7 +334,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-xl font-bold">Instagram</div>
-                    <div className="text-blue-100 text-base mb-2">Ve momentos especiales de nuestra comunidad y ministerio</div>
+                    <div className="text-slate-200 text-base mb-2">Ve momentos especiales de nuestra comunidad y ministerio</div>
                     <a 
                       href="https://www.instagram.com/obradeadulam/" 
                       target="_blank" 
