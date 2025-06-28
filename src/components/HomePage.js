@@ -148,13 +148,13 @@ const HomePage = () => {
             <div className="bg-gray-900/80 backdrop-blur-sm shadow-xl p-10 text-center border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-3xl font-bold text-white mb-6">Obra de Adulam</h3>
               <p className="text-gray-300 mb-8 text-lg">Campus Principal</p>
-              <p className="text-gray-400 mb-8 text-lg">255 16th St<br />Richmond, CA 94801</p>
+              <p className="text-gray-400 mb-8 text-lg">4 Marina Way<br />Richmond, CA 94806</p>
               <p className="text-gray-400 text-lg">Servicios Dominicales: 3:00 PM</p>
             </div>
             <div className="bg-gray-900/80 backdrop-blur-sm shadow-xl overflow-hidden border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="h-80 md:h-full">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1234567890123!2d-122.3456789!3d37.9876543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e1234567890%3A0xabcdef1234567890!2s255+16th+St%2C+Richmond%2C+CA+94801!5e0!3m2!1sen!2sus!4v1234567890123"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1234567890123!2d-122.3456789!3d37.9876543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e1234567890%3A0xabcdef1234567890!2s4+Marina+Way%2C+Richmond%2C+CA+94806!5e0!3m2!1sen!2sus!4v1234567890123"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
