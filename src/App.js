@@ -1,13 +1,33 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import HomePage from './components/HomePage';
-import DonatePage from './components/DonatePage';
-import PrayerRequestPage from './components/PrayerRequestPage';
-import VisitUsPage from './components/VisitUsPage';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useComponentPerformance } from './hooks/usePerformance';
 import './App.css';
 
+// Lazy load components for better performance
+const HomePage = lazy(() => import('./components/HomePage'));
+const DonatePage = lazy(() => import('./components/DonatePage'));
+const PrayerRequestPage = lazy(() => import('./components/PrayerRequestPage'));
+const VisitUsPage = lazy(() => import('./components/VisitUsPage'));
+
+// Loading component with performance monitoring
+const LoadingSpinner = React.memo(() => {
+  useComponentPerformance('LoadingSpinner');
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#03346E]"></div>
+    </div>
+  );
+});
+
+LoadingSpinner.displayName = 'LoadingSpinner';
+
+// About page component with performance optimization
 const AboutPage = React.memo(() => {
+  useComponentPerformance('AboutPage');
+  
   const beliefs = useMemo(() => [
     {
       title: "Dones Ministeriales",
@@ -104,19 +124,26 @@ const AboutPage = React.memo(() => {
 
 AboutPage.displayName = 'AboutPage';
 
+// Main App component with performance monitoring
 const App = React.memo(() => {
+  useComponentPerformance('App');
+  
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/donate" element={<DonatePage />} />
-          <Route path="/prayer" element={<PrayerRequestPage />} />
-          <Route path="/visit" element={<VisitUsPage />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Layout>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/donate" element={<DonatePage />} />
+              <Route path="/prayer" element={<PrayerRequestPage />} />
+              <Route path="/visit" element={<VisitUsPage />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+      </Router>
+    </ErrorBoundary>
   );
 });
 

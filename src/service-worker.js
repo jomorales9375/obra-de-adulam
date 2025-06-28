@@ -1,17 +1,14 @@
 /* eslint-disable no-restricted-globals */
 
-// This service worker can be customized!
-// See https://developers.google.com/web/tools/workbox/modules
-// for the list of available Workbox modules, or add any other
-// code you'd like.
-// You can also remove this file if you'd prefer not to use a
-// service worker, and the Workbox build step will be skipped.
+// Enhanced Service Worker for Obra de Adulam
+// Advanced caching strategies and performance optimizations
 
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { StaleWhileRevalidate, CacheFirst, NetworkFirst } from 'workbox-strategies';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 
 clientsClaim();
 
@@ -21,9 +18,7 @@ clientsClaim();
 // even if you decide not to use precaching. See https://cra.link/PWA
 precacheAndRoute(self.__WB_MANIFEST);
 
-// Set up App Shell-style routing, so that all navigation requests
-// are fulfilled with your index.html shell. Learn more at
-// https://developers.google.com/web/fundamentals/architecture/app-shell
+// Set up App Shell-style routing for SPA
 const fileExtensionRegexp = new RegExp('/[^/?]+\\.[^/]+$');
 registerRoute(
   // Return false to exempt requests from being fulfilled by index.html.
@@ -46,17 +41,73 @@ registerRoute(
   createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 );
 
-// An example runtime caching route for requests that aren't handled by the
-// precache, in this case same-origin .png requests like those from in public/
+// Cache images with CacheFirst strategy for better performance
 registerRoute(
-  // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'), // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new StaleWhileRevalidate({
+  ({ request }) => request.destination === 'image',
+  new CacheFirst({
     cacheName: 'images',
     plugins: [
-      // Ensure that once this runtime cache reaches a maximum size the
-      // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 50 }),
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+      }),
+    ],
+  })
+);
+
+// Cache videos with NetworkFirst strategy for better user experience
+registerRoute(
+  ({ request }) => request.destination === 'video',
+  new NetworkFirst({
+    cacheName: 'videos',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+      }),
+    ],
+  })
+);
+
+// Cache API calls with StaleWhileRevalidate for fresh data
+registerRoute(
+  ({ url }) => url.pathname.startsWith('/api/'),
+  new StaleWhileRevalidate({
+    cacheName: 'api-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 5 * 60, // 5 minutes
+      }),
+    ],
+  })
+);
+
+// Cache static assets with CacheFirst strategy
+registerRoute(
+  ({ request }) => 
+    request.destination === 'style' ||
+    request.destination === 'script' ||
+    request.destination === 'font',
+  new CacheFirst({
+    cacheName: 'static-resources',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 100,
+        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+      }),
     ],
   })
 );
@@ -69,4 +120,72 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Any other custom service worker logic can go here.
+// Background sync for offline form submissions
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'background-sync') {
+    event.waitUntil(doBackgroundSync());
+  }
+});
+
+async function doBackgroundSync() {
+  try {
+    // Handle any pending requests
+    const cache = await caches.open('offline-requests');
+    const requests = await cache.keys();
+    
+    for (const request of requests) {
+      try {
+        await fetch(request);
+        await cache.delete(request);
+      } catch (error) {
+        console.log('Background sync failed for:', request.url);
+      }
+    }
+  } catch (error) {
+    console.log('Background sync failed:', error);
+  }
+}
+
+// Push notifications (if needed in the future)
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/logo192.png',
+      badge: '/logo192.png',
+      vibrate: [100, 50, 100],
+      data: {
+        dateOfArrival: Date.now(),
+        primaryKey: 1
+      },
+      actions: [
+        {
+          action: 'explore',
+          title: 'Ver más',
+          icon: '/logo192.png'
+        },
+        {
+          action: 'close',
+          title: 'Cerrar',
+          icon: '/logo192.png'
+        }
+      ]
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    );
+  }
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'explore') {
+    event.waitUntil(
+      clients.openWindow('/')
+    );
+  }
+});

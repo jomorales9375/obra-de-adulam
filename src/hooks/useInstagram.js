@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { instagramAPI, FALLBACK_POSTS } from '../config/instagram';
+import { apiCache } from '../utils/cache';
+import { measureFunction } from '../utils/performance';
 
 export const useInstagram = () => {
   const [posts, setPosts] = useState([]);
@@ -8,68 +10,106 @@ export const useInstagram = () => {
   const [profile, setProfile] = useState(null);
 
   // Get access token from localStorage or environment
-  const getAccessToken = () => {
+  const getAccessToken = useCallback(() => {
     return localStorage.getItem('instagram_access_token') || 
            process.env.REACT_APP_INSTAGRAM_ACCESS_TOKEN;
-  };
-
-  // Fetch Instagram posts
-  const fetchPosts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const accessToken = getAccessToken();
-      
-      if (!accessToken) {
-        // No access token, use fallback data
-        console.log('No Instagram access token found, using fallback data');
-        setPosts(FALLBACK_POSTS);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch user profile
-      const profileData = await instagramAPI.getUserProfile(accessToken);
-      setProfile(profileData);
-
-      // Fetch user media
-      const mediaData = await instagramAPI.getUserMedia(accessToken, 6);
-      
-      if (mediaData.data) {
-        setPosts(mediaData.data);
-      } else {
-        throw new Error('No media data received');
-      }
-
-    } catch (err) {
-      console.error('Error fetching Instagram posts:', err);
-      setError(err.message);
-      // Fallback to static data on error
-      setPosts(FALLBACK_POSTS);
-    } finally {
-      setLoading(false);
-    }
   }, []);
 
-  // Refresh posts
-  const refreshPosts = useCallback(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+  // Fetch Instagram posts with caching and performance monitoring
+  const fetchPosts = useCallback(async () => {
+    const measureFetchPosts = measureFunction('fetchInstagramPosts', async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const accessToken = getAccessToken();
+        
+        if (!accessToken) {
+          // No access token, use fallback data
+          console.log('No Instagram access token found, using fallback data');
+          setPosts(FALLBACK_POSTS);
+          setLoading(false);
+          return;
+        }
+
+        // Check cache first
+        const cacheKey = `instagram_posts_${accessToken}`;
+        const cachedData = apiCache.get(cacheKey);
+        
+        if (cachedData) {
+          console.log('Using cached Instagram data');
+          setPosts(cachedData.posts);
+          setProfile(cachedData.profile);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch fresh data
+        const [profileData, mediaData] = await Promise.all([
+          instagramAPI.getUserProfile(accessToken),
+          instagramAPI.getUserMedia(accessToken, 6)
+        ]);
+
+        setProfile(profileData);
+        
+        if (mediaData.data) {
+          setPosts(mediaData.data);
+          
+          // Cache the response for 30 minutes
+          apiCache.cacheApiResponse(cacheKey, null, {
+            posts: mediaData.data,
+            profile: profileData
+          }, 30 * 60 * 1000);
+        } else {
+          throw new Error('No media data received');
+        }
+
+      } catch (err) {
+        console.error('Error fetching Instagram posts:', err);
+        setError(err.message);
+        // Fallback to static data on error
+        setPosts(FALLBACK_POSTS);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    await measureFetchPosts();
+  }, [getAccessToken]);
+
+  // Refresh posts with cache invalidation
+  const refreshPosts = useCallback(async () => {
+    const accessToken = getAccessToken();
+    if (accessToken) {
+      // Invalidate cache
+      const cacheKey = `instagram_posts_${accessToken}`;
+      apiCache.delete(cacheKey);
+    }
+    await fetchPosts();
+  }, [fetchPosts, getAccessToken]);
 
   // Initialize on mount
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
 
-  // Auto-refresh every 30 minutes
+  // Auto-refresh every 30 minutes with cache consideration
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchPosts();
+      // Only refresh if cache is stale or doesn't exist
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        const cacheKey = `instagram_posts_${accessToken}`;
+        const cachedData = apiCache.get(cacheKey);
+        
+        if (!cachedData) {
+          fetchPosts();
+        }
+      }
     }, 30 * 60 * 1000); // 30 minutes
 
     return () => clearInterval(interval);
-  }, [fetchPosts]);
+  }, [fetchPosts, getAccessToken]);
 
   return {
     posts,

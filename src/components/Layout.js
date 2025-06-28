@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
@@ -6,16 +6,42 @@ const Layout = ({ children }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
 
-  // Handle scroll effect for navbar
+  // Memoize navigation items
+  const navigationItems = useMemo(() => [
+    { path: '/', label: 'INICIO' },
+    { path: '/about', label: 'ACERCA DE' },
+    { path: '/prayer', label: 'ORACIÓN' },
+    { path: '/visit', label: 'VISÍTANOS' },
+    { path: '/donate', label: 'DAR' }
+  ], []);
+
+  // Optimized scroll handler with throttling
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
   }, []);
 
   return (
@@ -29,13 +55,14 @@ const Layout = ({ children }) => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
-            <Link to="/" className="group">
+            <Link to="/" className="group" aria-label="Ir al inicio">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105 overflow-hidden">
                   <img 
                     src="/Adulam Logo.jpg" 
                     alt="Obra de Adulam Logo" 
                     className="w-12 h-12 object-cover"
+                    loading="eager"
                   />
                 </div>
                 <div className="flex flex-col">
@@ -54,14 +81,8 @@ const Layout = ({ children }) => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-1">
-              {[
-                { path: '/', label: 'INICIO' },
-                { path: '/about', label: 'ACERCA DE' },
-                { path: '/prayer', label: 'ORACIÓN' },
-                { path: '/visit', label: 'VISÍTANOS' },
-                { path: '/donate', label: 'DAR' }
-              ].map((item) => (
+            <nav className="hidden md:flex space-x-1" role="navigation" aria-label="Navegación principal">
+              {navigationItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
@@ -74,6 +95,7 @@ const Layout = ({ children }) => {
                         ? 'text-slate-700 hover:bg-slate-100'
                         : 'text-slate-200 hover:bg-white/10 hover:text-white'
                   }`}
+                  aria-current={isActive(item.path) ? 'page' : undefined}
                 >
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">{item.label}</span>
@@ -99,7 +121,9 @@ const Layout = ({ children }) => {
                   ? 'text-slate-700 hover:bg-slate-100' 
                   : 'text-white hover:bg-white/10'
               }`}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={toggleMenu}
+              aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={isMenuOpen}
             >
               <div className="relative w-6 h-6">
                 <span className={`absolute left-0 w-6 h-0.5 bg-current transform transition-all duration-300 ${
@@ -119,15 +143,9 @@ const Layout = ({ children }) => {
           <div className={`md:hidden overflow-hidden transition-all duration-500 ${
             isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}>
-            <nav className="py-4 border-t border-slate-700/30">
+            <nav className="py-4 border-t border-slate-700/30" role="navigation" aria-label="Navegación móvil">
               <div className="flex flex-col space-y-2">
-                {[
-                  { path: '/', label: 'INICIO' },
-                  { path: '/about', label: 'ACERCA DE' },
-                  { path: '/prayer', label: 'ORACIÓN' },
-                  { path: '/visit', label: 'VISÍTANOS' },
-                  { path: '/donate', label: 'DAR' }
-                ].map((item, index) => (
+                {navigationItems.map((item, index) => (
                   <Link
                     key={item.path}
                     to={item.path}
@@ -142,6 +160,7 @@ const Layout = ({ children }) => {
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                     style={{ animationDelay: `${index * 100}ms` }}
+                    aria-current={isActive(item.path) ? 'page' : undefined}
                   >
                     <span className="font-medium">{item.label}</span>
                     {isActive(item.path) && (
@@ -247,4 +266,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout; 
+export default React.memo(Layout); 

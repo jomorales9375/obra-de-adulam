@@ -1,34 +1,22 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const videoRef1 = useRef(null);
   const videoRef2 = useRef(null);
-  const [videosLoaded, setVideosLoaded] = useState(false);
 
   useEffect(() => {
     const handleVideoLoad = (videoRef) => {
       if (videoRef.current) {
-        // Preload metadata only, then play when ready
-        videoRef.current.preload = 'metadata';
         videoRef.current.play().catch(error => {
           console.log('Video autoplay failed:', error);
         });
       }
     };
 
-    // Load videos with delay to prioritize page content
-    const timer = setTimeout(() => {
-      handleVideoLoad(videoRef1);
-      handleVideoLoad(videoRef2);
-    }, 100);
-
-    return () => clearTimeout(timer);
+    handleVideoLoad(videoRef1);
+    handleVideoLoad(videoRef2);
   }, []);
-
-  const handleVideoCanPlay = () => {
-    setVideosLoaded(true);
-  };
 
   return (
     <div className="min-h-screen font-sans">
@@ -37,31 +25,25 @@ const HomePage = () => {
         <div className="absolute inset-0 flex">
           <video
             ref={videoRef1}
-            className={`w-1/2 h-full object-cover transition-opacity duration-1000 ${videosLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className="w-1/2 h-full object-cover"
             muted
             loop
             playsInline
-            preload="metadata"
-            poster="/community.jpg"
             onLoadedMetadata={(e) => {
               e.target.currentTime = 0; // Start from beginning
             }}
-            onCanPlay={handleVideoCanPlay}
           >
             <source src="/videos/church-background.mp4" type="video/mp4" />
           </video>
           <video
             ref={videoRef2}
-            className={`w-1/2 h-full object-cover transition-opacity duration-1000 ${videosLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className="w-1/2 h-full object-cover"
             muted
             loop
             playsInline
-            preload="metadata"
-            poster="/teaching.jpg"
             onLoadedMetadata={(e) => {
               e.target.currentTime = 30; // Start 30 seconds in
             }}
-            onCanPlay={handleVideoCanPlay}
           >
             <source src="/videos/church-background.mp4" type="video/mp4" />
           </video>
@@ -76,7 +58,7 @@ const HomePage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
-              to="/visit-us"
+              to="/visit"
               className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-10 py-4 font-semibold hover:from-blue-700 hover:to-blue-900 transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Visítanos
