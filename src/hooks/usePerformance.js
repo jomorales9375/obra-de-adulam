@@ -7,6 +7,13 @@ export const usePerformance = () => {
     measurements: new Map(),
   });
 
+  const performanceData = useRef({
+    videoLoadTime: 0,
+    connectionSpeed: 'unknown',
+    deviceType: 'unknown',
+    videoSupported: true
+  });
+
   // Measure component render time
   const measureRender = useCallback((componentName) => {
     const start = performance.now();
@@ -130,6 +137,60 @@ export const usePerformance = () => {
       network: getNetworkInfo(),
     };
   }, [getMemoryInfo, getNetworkInfo]);
+
+  useEffect(() => {
+    // Track video loading performance
+    const trackVideoPerformance = () => {
+      const startTime = performance.now();
+      
+      return () => {
+        const loadTime = performance.now() - startTime;
+        performanceData.current.videoLoadTime = loadTime;
+        
+        // Log performance data for analytics
+        console.log('Video Performance:', {
+          loadTime: `${loadTime.toFixed(2)}ms`,
+          connectionSpeed: performanceData.current.connectionSpeed,
+          deviceType: performanceData.current.deviceType
+        });
+      };
+    };
+
+    // Detect connection speed
+    const detectConnectionSpeed = () => {
+      if (navigator.connection) {
+        const connection = navigator.connection;
+        performanceData.current.connectionSpeed = connection.effectiveType || 'unknown';
+        
+        // Log connection info
+        console.log('Connection Info:', {
+          effectiveType: connection.effectiveType,
+          downlink: connection.downlink,
+          rtt: connection.rtt,
+          saveData: connection.saveData
+        });
+      }
+    };
+
+    // Detect device type
+    const detectDeviceType = () => {
+      const userAgent = navigator.userAgent;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+      performanceData.current.deviceType = isMobile ? 'mobile' : 'desktop';
+    };
+
+    // Check video format support
+    const checkVideoSupport = () => {
+      const video = document.createElement('video');
+      performanceData.current.videoSupported = !!video.canPlayType;
+    };
+
+    detectConnectionSpeed();
+    detectDeviceType();
+    checkVideoSupport();
+
+    return trackVideoPerformance();
+  }, []);
 
   return {
     measureRender,

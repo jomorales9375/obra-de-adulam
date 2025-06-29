@@ -1,53 +1,68 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import OptimizedVideo from './OptimizedVideo';
 
 const HomePage = () => {
-  const videoRef1 = useRef(null);
-  const videoRef2 = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleVideoLoad = (videoRef) => {
-      if (videoRef.current) {
-        videoRef.current.play().catch(error => {
-          console.log('Video autoplay failed:', error);
-        });
-      }
+    // Detect mobile devices
+    const checkMobile = () => {
+      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobile(mobile);
+      return mobile;
     };
 
-    handleVideoLoad(videoRef1);
-    handleVideoLoad(videoRef2);
+    checkMobile();
   }, []);
 
   return (
     <div className="min-h-screen font-sans">
       {/* Hero Section - Black */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
-        <div className="absolute inset-0 flex">
-          <video
-            ref={videoRef1}
-            className="w-1/2 h-full object-cover"
-            muted
-            loop
-            playsInline
-            onLoadedMetadata={(e) => {
-              e.target.currentTime = 0; // Start from beginning
-            }}
-          >
-            <source src="/videos/church-background.mp4" type="video/mp4" />
-          </video>
-          <video
-            ref={videoRef2}
-            className="w-1/2 h-full object-cover"
-            muted
-            loop
-            playsInline
-            onLoadedMetadata={(e) => {
-              e.target.currentTime = 30; // Start 30 seconds in
-            }}
-          >
-            <source src="/videos/church-background.mp4" type="video/mp4" />
-          </video>
+        {/* Static Background Image - Always visible */}
+        <div className="absolute inset-0">
+          <img
+            src="/community.jpg"
+            alt="Obra de Adulam Background"
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         </div>
+
+        {/* Video Background - Only loads on desktop */}
+        {!isMobile && (
+          <div className="absolute inset-0 flex">
+            <OptimizedVideo
+              src="/videos/church-background.mp4"
+              className="w-1/2 h-full object-cover"
+              startTime={0}
+              onLoad={(video) => {
+                console.log('Video 1 loaded successfully');
+              }}
+              onError={(error) => {
+                console.log('Video 1 failed to load:', error);
+              }}
+            />
+            <OptimizedVideo
+              src="/videos/church-background.mp4"
+              className="w-1/2 h-full object-cover"
+              startTime={30}
+              onLoad={(video) => {
+                console.log('Video 2 loaded successfully');
+              }}
+              onError={(error) => {
+                console.log('Video 2 failed to load:', error);
+              }}
+            />
+          </div>
+        )}
+
+        {/* CSS Animation Fallback for Mobile */}
+        {isMobile && (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800 animate-pulse"></div>
+        )}
         
         <div className="absolute inset-0 bg-black bg-opacity-70"></div>
         
