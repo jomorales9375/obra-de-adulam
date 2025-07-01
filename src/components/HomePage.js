@@ -247,12 +247,12 @@ const HomePage = () => {
                     </div>
                     
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <a 
-                        href="/events" 
+                      <Link 
+                        to="/events"
                         className="bg-white text-blue-600 px-4 py-2 font-semibold hover:bg-gray-100 transition-all duration-300 text-center text-sm"
                       >
                         Más Info
-                      </a>
+                      </Link>
                       <a 
                         href="https://maps.google.com/?q=255+16th+St,+Richmond,+CA+94806" 
                         target="_blank" 
@@ -270,15 +270,15 @@ const HomePage = () => {
 
           <div className="text-center mt-12">
             <p className="text-gray-600 mb-6 text-lg">¿No puedes asistir? No te preocupes</p>
-            <a 
-              href="/events" 
+            <Link 
+              to="/events" 
               className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition duration-300 text-lg"
             >
               Ver otros eventos y actividades
               <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
