@@ -248,7 +248,7 @@ const HomePage = () => {
                     
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Link 
-                        to="/events"
+                        to="/events/visita-apostolica-2025"
                         className="bg-white text-blue-600 px-4 py-2 font-semibold hover:bg-gray-100 transition-all duration-300 text-center text-sm"
                       >
                         Más Info

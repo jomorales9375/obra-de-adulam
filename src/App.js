@@ -10,6 +10,8 @@ const HomePage = lazy(() => import('./components/HomePage'));
 const DonatePage = lazy(() => import('./components/DonatePage'));
 const PrayerRequestPage = lazy(() => import('./components/PrayerRequestPage'));
 const VisitUsPage = lazy(() => import('./components/VisitUsPage'));
+const EventDetailsPage = lazy(() => import('./components/EventDetailsPage'));
+const EventsListPage = lazy(() => import('./components/EventsListPage'));
 
 // Loading component with performance monitoring
 const LoadingSpinner = React.memo(() => {
@@ -70,9 +72,8 @@ const AboutPage = React.memo(() => {
           
           <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
             <p>
-              ¡Bienvenido a Obra de Adulam! Somos una congregación acogedora e inclusiva 
-              dedicada a difundir el amor de Dios y servir a nuestra comunidad. Fundada en 1985, 
-              hemos sido una piedra angular de fe y compañerismo en nuestra área por más de 35 años.
+              ¡Bienvenido a Obra de Adulam! 
+              Somos una comunidad comprometida a ayudar a las personas a crecer en la fe, conectarse con otros y servir con un propósito.
             </p>
             
             <p>
@@ -139,6 +140,8 @@ const App = React.memo(() => {
               <Route path="/donate" element={<DonatePage />} />
               <Route path="/prayer" element={<PrayerRequestPage />} />
               <Route path="/visit" element={<VisitUsPage />} />
+              <Route path="/events" element={<EventsListPage />} />
+              <Route path="/events/:slug" element={<EventDetailsPage />} />
             </Routes>
           </Suspense>
         </Layout>
