@@ -69,7 +69,9 @@ const HomePage = () => {
         <div className="relative z-10 text-center text-white px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">Obra de Adulam</h1>
           <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed font-light">
-            Una comunidad de fe que busca glorificar a Dios y hacer discípulos de todas las naciones
+          Llamados a Enseñar y Ejercer el Sacerdocio de Dios en los últimos tiempos
+
+
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
@@ -162,7 +164,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
             <div className="bg-gray-900/80 backdrop-blur-sm shadow-xl p-10 text-center border border-gray-800 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <h3 className="text-3xl font-bold text-white mb-6">Obra de Adulam</h3>
-              <p className="text-gray-300 mb-8 text-lg">Campus Principal</p>
+              <p className="text-gray-300 mb-8 text-lg"></p>
               <p className="text-gray-400 mb-8 text-lg">4 Marina Way<br />Richmond, CA 94806</p>
               <p className="text-gray-400 text-lg">Servicios Dominicales: 3:00 PM</p>
             </div>
@@ -252,7 +254,7 @@ const HomePage = () => {
                         Más Info
                       </a>
                       <a 
-                        href="https://maps.google.com" 
+                        href="https://maps.google.com/?q=255+16th+St,+Richmond,+CA+94806" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="border border-white text-white px-4 py-2 font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 text-center text-sm"
