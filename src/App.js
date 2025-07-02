@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
+import CacheManager from './components/CacheManager';
 import { useComponentPerformance } from './hooks/usePerformance';
 import './App.css';
 
@@ -144,6 +145,7 @@ const App = React.memo(() => {
               <Route path="/events/:slug" element={<EventDetailsPage />} />
             </Routes>
           </Suspense>
+          <CacheManager />
         </Layout>
       </Router>
     </ErrorBoundary>
