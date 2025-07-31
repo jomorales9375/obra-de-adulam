@@ -14,7 +14,7 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 clientsClaim();
 
 // Cache version for busting - increment this when deploying major updates
-const CACHE_VERSION = 'v1.3.0';
+const CACHE_VERSION = 'v1.4.0';
 const CACHE_NAMES = {
   images: `images-${CACHE_VERSION}`,
   videos: `videos-${CACHE_VERSION}`,
@@ -37,6 +37,9 @@ self.addEventListener('activate', (event) => {
           return Promise.resolve(); // Return a resolved promise for current caches
         })
       );
+    }).then(() => {
+      // Force update all clients to ensure they get the latest version
+      return self.clients.claim();
     })
   );
 });
@@ -141,16 +144,22 @@ registerRoute(
   })
 );
 
-// This allows the web app to trigger skipWaiting via
-// registration.waiting.postMessage({type: 'SKIP_WAITING'})
+// Add message listener for manual cache clearing
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
-  // Handle cache clearing requests
   if (event.data && event.data.type === 'CLEAR_CACHE') {
-    event.waitUntil(clearAllCaches());
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            console.log('Clearing cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      })
+    );
   }
 });
 

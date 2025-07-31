@@ -1,10 +1,11 @@
-import React, { useMemo, useCallback, Suspense, lazy } from 'react';
+import React, { useMemo, useCallback, Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import CacheManager from './components/CacheManager';
 import { useComponentPerformance } from './hooks/usePerformance';
+import { checkForUpdates, addUpdateNotification } from './utils/cache';
 import './App.css';
 
 // Lazy load components for better performance
@@ -145,6 +146,12 @@ AboutPage.displayName = 'AboutPage';
 // Main App component with performance monitoring
 const App = React.memo(() => {
   useComponentPerformance('App');
+  
+  // Check for updates when the app loads
+  useEffect(() => {
+    checkForUpdates();
+    addUpdateNotification();
+  }, []);
   
   return (
     <ErrorBoundary>
