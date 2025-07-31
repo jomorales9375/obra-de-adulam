@@ -163,21 +163,6 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Function to clear all caches
-async function clearAllCaches() {
-  try {
-    const cacheNames = await caches.keys();
-    await Promise.all(
-      cacheNames.map(cacheName => caches.delete(cacheName))
-    );
-    console.log('All caches cleared successfully');
-    return true;
-  } catch (error) {
-    console.error('Error clearing caches:', error);
-    return false;
-  }
-}
-
 // Background sync for offline form submissions
 self.addEventListener('sync', (event) => {
   if (event.tag === 'background-sync') {
