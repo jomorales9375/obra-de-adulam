@@ -37,7 +37,7 @@ Create a `.env` file in your project root with:
 ```env
 REACT_APP_INSTAGRAM_CLIENT_ID=your_instagram_client_id_here
 REACT_APP_INSTAGRAM_CLIENT_SECRET=your_instagram_client_secret_here
-REACT_APP_INSTAGRAM_REDIRECT_URI=http://localhost:3000/instagram-callback
+REACT_APP_INSTAGRAM_REDIRECT_URI=https://obradeadulam.org/instagram-callback
 ```
 
 ## Step 5: Get Access Token

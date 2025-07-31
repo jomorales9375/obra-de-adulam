@@ -1,298 +1,403 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import emailjs from '@emailjs/browser';
+import { SECURITY_CONFIG } from '../config/security';
+import { 
+  sanitizeInput, 
+  validateEmail, 
+  validateName,
+  checkRateLimit 
+} from '../utils/validation';
 
 const VisitUsPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validate name
+    if (!validateName(formData.name)) {
+      newErrors.name = 'Por favor ingresa un nombre válido (2-50 caracteres)';
+    }
+    
+    // Validate email (required)
+    if (!formData.email || !validateEmail(formData.email)) {
+      newErrors.email = 'Por favor ingresa un correo electrónico válido';
+    }
+    
+    // Validate subject (optional but if provided, must be valid)
+    if (formData.subject && formData.subject.trim().length < 3) {
+      newErrors.subject = 'El asunto debe tener al menos 3 caracteres';
+    }
+    
+    // Validate message (required)
+    if (!formData.message || formData.message.trim().length < 10) {
+      newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    let sanitizedValue;
+    
+    // Don't sanitize message field on every keystroke to allow spaces
+    if (name === 'message') {
+      sanitizedValue = value; // Allow spaces in message
+    } else {
+      sanitizedValue = sanitizeInput(value);
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: sanitizedValue
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Submitting contact form...');
+    
+    // Validate form
+    if (!validateForm()) {
+      console.log('Validation failed');
+      return;
+    }
+    console.log('Validation passed');
+    
+    // Check rate limiting
+    const userIdentifier = formData.email || 'anonymous';
+    if (!checkRateLimit(userIdentifier, 5, 60000)) { // 5 requests per minute
+      console.log('Rate limit hit');
+      return;
+    }
+    console.log('Rate limit passed');
+    
+    setIsSubmitting(true);
+
+    try {
+      // Debug: Log EmailJS configuration
+      console.log('Service ID:', SECURITY_CONFIG.EMAILJS.SERVICE_ID);
+      console.log('Template ID:', SECURITY_CONFIG.EMAILJS.TEMPLATE_ID);
+      console.log('Public Key:', SECURITY_CONFIG.EMAILJS.PUBLIC_KEY ? '***' + SECURITY_CONFIG.EMAILJS.PUBLIC_KEY.slice(-4) : 'NOT SET');
+
+      // Check if EmailJS is properly configured
+      if (SECURITY_CONFIG.EMAILJS.SERVICE_ID === 'YOUR_SERVICE_ID' ||
+          SECURITY_CONFIG.EMAILJS.TEMPLATE_ID === 'YOUR_TEMPLATE_ID' ||
+          SECURITY_CONFIG.EMAILJS.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        throw new Error('EmailJS no está configurado. Por favor, configura las credenciales en el archivo .env');
+      }
+
+      const emailData = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject || 'Consulta desde el sitio web',
+        message: formData.message
+      };
+
+      console.log('Sending email with data:', emailData);
+
+      const result = await emailjs.send(
+        SECURITY_CONFIG.EMAILJS.SERVICE_ID,
+        SECURITY_CONFIG.EMAILJS.TEMPLATE_ID,
+        emailData,
+        SECURITY_CONFIG.EMAILJS.PUBLIC_KEY
+      );
+
+      console.log('EmailJS SUCCESS!', result);
+      setShowSuccessModal(true);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setErrors({});
+
+    } catch (error) {
+      console.error('EmailJS ERROR:', error);
+      
+      let userMessage = 'Error al enviar el mensaje. Por favor, intenta nuevamente.';
+      
+      if (error.message.includes('no está configurado')) {
+        userMessage = 'El formulario de contacto no está configurado. Por favor, contacta al administrador.';
+      } else if (error.status === 400) {
+        userMessage = 'Error en el formato del mensaje. Por favor, verifica la información.';
+      } else if (error.status === 401) {
+        userMessage = 'Error de autenticación. Por favor, contacta al administrador.';
+      } else if (error.status === 404) {
+        userMessage = 'Servicio no encontrado. Por favor, contacta al administrador.';
+      }
+      
+      setErrorMessage(userMessage);
+      setShowErrorModal(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans">
+      <Helmet>
+        <title>Visítanos - Obra de Adulam</title>
+        <meta name="description" content="Visita nuestra iglesia en Richmond, CA. Encuentra información sobre horarios, dirección y cómo llegar. Únete a nuestra comunidad de adoración." />
+        <meta name="keywords" content="iglesia, obra de adulam, horarios, dirección, Richmond, CA, Estados Unidos" />
+        <meta property="og:title" content="Visítanos - Obra de Adulam" />
+        <meta property="og:description" content="Visita nuestra iglesia en Richmond, CA. Encuentra información sobre horarios, dirección y cómo llegar. Únete a nuestra comunidad de adoración." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.obradeadulam.org/visit-us" />
+        <meta property="og:image" content="https://www.obradeadulam.org/assets/images/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Visítanos - Obra de Adulam" />
+        <meta name="twitter:description" content="Visita nuestra iglesia en Richmond, CA. Encuentra información sobre horarios, dirección y cómo llegar. Únete a nuestra comunidad de adoración." />
+        <meta name="twitter:image" content="https://www.obradeadulam.org/assets/images/og-image.jpg" />
+      </Helmet>
+
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20">
-        <div className="container mx-auto px-4 text-center">
+      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Visítanos</h1>
-          <p className="text-xl text-slate-200 max-w-3xl mx-auto">
-            Te invitamos a unirte a nosotros en adoración, comunidad y crecimiento espiritual. 
-            Hay un lugar especial para ti en Obra de Adulam.
+          <div className="w-32 h-1 bg-gradient-to-r from-blue-500 to-blue-700 mx-auto mb-8"></div>
+          <p className="text-xl md:text-2xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-light">
+            Únete a nosotros en nuestros servicios y experimenta la presencia de Dios en comunidad
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Church Information */}
-              <div className="space-y-8">
-                <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-[#03346E]">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Información de la Iglesia</h3>
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#03346E]">📍</span>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 mb-1">Dirección</h4>
-                        <p className="text-slate-600">
-                          4 Marina Way<br />
-                          Richmond, CA 94806<br />
-                          Estados Unidos
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#03346E]">🕒</span>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 mb-1">Horarios de Servicios</h4>
-                        <p className="text-slate-600">
-                          <strong>Servicios Dominicales:</strong> 3:00 PM
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 bg-[#03346E]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#03346E]">📞</span>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 mb-1">Contacto</h4>
-                        <p className="text-slate-600">
-                          <strong>Teléfono:</strong> (510) 555-0123<br />
-                          <strong>Email:</strong> info@obradeadulam.org
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Parking & Accessibility */}
-                <div className="bg-gradient-to-br from-[#021526] to-[#021526] rounded-lg p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-6 text-[#03346E]">Estacionamiento y Accesibilidad</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <span className="text-[#03346E] text-lg">🚗</span>
-                      <div>
-                        <h4 className="font-semibold">Estacionamiento Gratuito</h4>
-                        <p className="text-slate-200 text-sm">Amplio estacionamiento disponible en el lugar.</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3">
-                      <span className="text-[#03346E] text-lg">👶</span>
-                      <div>
-                        <h4 className="font-semibold">Cuidado de Niños</h4>
-                        <p className="text-slate-200 text-sm">Programa especial para niños durante el servicio.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Map */}
-              <div className="space-y-8">
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                  <div className="h-96">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1234567890123!2d-122.3456789!3d37.9876543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e1234567890%3A0xabcdef1234567890!2s4+Marina+Way%2C+Richmond%2C+CA+94806!5e0!3m2!1sen!2sus!4v1234567890123"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen=""
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title="Obra de Adulam - Richmond Location"
-                    ></iframe>
-                  </div>
-                </div>
-
-                {/* First Time Visitor */}
-                <div className="bg-gradient-to-br from-[#03346E] to-[#03346E] rounded-lg p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-6">¿Primera Vez?</h3>
-                  <p className="mb-6 text-slate-200">
-                    Nos encantaría conocerte mejor y ayudarte a sentirte como en casa. 
-                    Completa nuestro formulario de visitante para que podamos prepararnos para tu visita.
-                  </p>
-                  <button className="bg-[#021526] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#021526]/80 transition duration-300">
-                    Registrarse como Visitante
-                  </button>
-                </div>
-              </div>
-            </div>
+      {/* Location Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Nuestra Ubicación</h2>
+            <div className="w-32 h-1 bg-gradient-to-r from-[#03346E] to-[#1e40af] mx-auto mb-8"></div>
+            <p className="text-slate-700 max-w-3xl mx-auto text-lg leading-relaxed">
+              Encuentra nuestra iglesia en Richmond, CA. Te esperamos con los brazos abiertos.
+            </p>
           </div>
-        </div>
-      </section>
-
-      {/* Social Media Section */}
-      <section className="py-16 bg-gradient-to-br from-[#021526] to-[#03346E] text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-4">Síguenos en Redes Sociales</h2>
-              <div className="w-24 h-1 bg-blue-400 mx-auto mb-6"></div>
-              <p className="text-slate-200">
-                Mantente conectado con nuestra comunidad a través de nuestras redes sociales.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* YouTube */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-8 text-center border-t-4 border-red-600 hover:shadow-xl transition-all duration-300 hover:bg-white/20">
-                <div className="w-16 h-16 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">YouTube</h3>
-                <p className="text-slate-200 mb-6">
-                  Mira nuestros sermones, testimonios y contenido inspirador.
-                </p>
-                <a 
-                  href="https://www.youtube.com/@obradeadulam9857" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block bg-red-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-red-700 transition duration-300 w-full"
-                >
-                  Suscríbete
-                </a>
-              </div>
-
-              {/* Facebook */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-8 text-center border-t-4 border-blue-600 hover:shadow-xl transition-all duration-300 hover:bg-white/20">
-                <div className="w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">Facebook</h3>
-                <p className="text-slate-200 mb-6">
-                  Únete a nuestra comunidad y mantente actualizado con eventos y noticias.
-                </p>
-                <a 
-                  href="https://www.facebook.com/profile.php?id=100093414965081" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-blue-700 transition duration-300 w-full"
-                >
-                  Síguenos
-                </a>
-              </div>
-
-              {/* Instagram */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg shadow-lg p-8 text-center border-t-4 border-pink-600 hover:shadow-xl transition-all duration-300 hover:bg-white/20">
-                <div className="w-16 h-16 bg-pink-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.875-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">Instagram</h3>
-                <p className="text-slate-200 mb-6">
-                  Comparte momentos especiales y conecta con nuestra familia espiritual.
-                </p>
-                <a 
-                  href="https://www.instagram.com/obradeadulam/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-block bg-pink-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-pink-700 transition duration-300 w-full"
-                >
-                  Síguenos
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">¿Tienes Preguntas?</h2>
-              <div className="w-24 h-1 bg-[#03346E] mx-auto mb-6"></div>
-              <p className="text-slate-700">
-                Si tienes preguntas sobre visitarnos o quieres más información, 
-                no dudes en contactarnos.
-              </p>
-            </div>
-            
-            <div className="bg-slate-50 rounded-lg p-8">
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Nombre *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
-                      placeholder="Tu nombre completo"
-                    />
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Church Information */}
+            <div className="bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">Información de la Iglesia</h3>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
                   </div>
-                  
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
-                      placeholder="tu@email.com"
-                    />
+                    <h4 className="font-semibold text-slate-900">Dirección</h4>
+                    <p className="text-slate-700">4 Marina Way<br />Richmond, CA 94806<br />Estados Unidos</p>
                   </div>
                 </div>
                 
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Horarios de Servicios</h4>
+                    <p className="text-slate-700">Servicios Dominicales: 3:00 PM</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">Contacto</h4>
+                    <p className="text-slate-700">Email: obradeadulam@gmail.com</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Map */}
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+              <div className="h-80">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3148.1234567890123!2d-122.3456789!3d37.9876543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e1234567890%3A0xabcdef1234567890!2s4+Marina+Way%2C+Richmond%2C+CA+94806!5e0!3m2!1sen!2sus!4v1234567890123"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Obra de Adulam - Richmond Location"
+                ></iframe>
+              </div>
+            </div>
+            
+            {/* Parking and Accessibility */}
+            <div className="bg-gradient-to-br from-[#021526] to-[#03346E] rounded-2xl p-8 text-white shadow-2xl">
+              <h3 className="text-2xl font-bold text-blue-200 mb-6">Estacionamiento y Accesibilidad</h3>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                      <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-200">Estacionamiento Gratuito</h4>
+                    <p className="text-slate-200">Amplio estacionamiento disponible en el lugar.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-4">
+                  <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-200">Cuidado de Niños</h4>
+                    <p className="text-slate-200">Programa especial para niños durante el servicio.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">¿Tienes Preguntas?</h2>
+            <div className="w-32 h-1 bg-gradient-to-r from-[#03346E] to-[#1e40af] mx-auto mb-8"></div>
+            <p className="text-slate-700 max-w-3xl mx-auto text-lg leading-relaxed">
+              Envíanos un mensaje y te responderemos lo antes posible. Estamos aquí para ayudarte.
+            </p>
+          </div>
+            
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-slate-200">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
-                    Asunto
+                  <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Nombre *
                   </label>
                   <input
                     type="text"
-                    id="subject"
-                    name="subject"
-                    className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300"
-                    placeholder="¿En qué podemos ayudarte?"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                      errors.name ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="Tu nombre completo"
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
                 </div>
                 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
-                    Mensaje *
+                  <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Email *
                   </label>
-                  <textarea
-                    id="message"
-                    name="message"
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     required
-                    rows="5"
-                    className="w-full px-4 py-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical"
-                    placeholder="Escribe tu mensaje aquí..."
-                  ></textarea>
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                      errors.email ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="tu@email.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
-                
-                <div className="text-center">
-                  <button
-                    type="submit"
-                    className="bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
-                  >
-                    Enviar Mensaje
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+              
+              <div>
+                <label htmlFor="subject" className="block text-sm font-semibold text-slate-700 mb-2">
+                  Asunto
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                    errors.subject ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="¿En qué podemos ayudarte?"
+                />
+                {errors.subject && (
+                  <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor="message" className="block text-sm font-semibold text-slate-700 mb-2">
+                  Mensaje *
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows="5"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical ${
+                    errors.message ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="Escribe tu mensaje aquí..."
+                ></textarea>
+                {errors.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                )}
+              </div>
+              
+              <div className="text-center">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-[#03346E] to-[#1e40af] text-white px-8 py-4 rounded-xl font-semibold hover:from-[#1e40af] hover:to-[#03346E] disabled:bg-slate-400 disabled:cursor-not-allowed transition duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-[#021526] text-white">
+      <section className="py-20 bg-[#021526] text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">¡Te Esperamos!</h2>
           <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
@@ -302,19 +407,62 @@ const VisitUsPage = () => {
           <div className="space-y-4 md:space-y-0 md:space-x-6 md:flex md:justify-center">
             <Link
               to="/prayer"
-              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
+              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
             >
               Petición de Oración
             </Link>
             <Link
               to="/donate"
-              className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg"
+              className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg"
             >
               Apoyar el Ministerio
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">✅</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">¡Mensaje Enviado!</h3>
+            <p className="text-slate-600 mb-6">
+              Tu mensaje ha sido enviado exitosamente. 
+              Te responderemos lo antes posible.
+            </p>
+            <button 
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full bg-[#03346E] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">❌</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">Error al Enviar</h3>
+            <p className="text-slate-600 mb-6">
+              {errorMessage}
+            </p>
+            <button 
+              onClick={() => setShowErrorModal(false)}
+              className="w-full bg-[#021526] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#021526]/80 transition duration-300"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -187,7 +187,7 @@ const Layout = ({ children }) => {
       {/* Footer */}
       <footer className="bg-[#021526] text-white">
         <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Church Info */}
             <div className="md:col-span-2">
               <h3 className="text-2xl font-bold mb-4 text-[#03346E]">Obra de Adulam</h3>
@@ -231,27 +231,7 @@ const Layout = ({ children }) => {
               </ul>
             </div>
 
-            {/* Resources */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-[#03346E]">Recursos</h4>
-              <ul className="space-y-2">
-                <li>
-                  <button className="text-slate-300 hover:text-[#03346E] transition duration-300 bg-transparent border-none p-0 text-left">
-                    Descarga Nuestra App
-                  </button>
-                </li>
-                <li>
-                  <button className="text-slate-300 hover:text-[#03346E] transition duration-300 bg-transparent border-none p-0 text-left">
-                    Archivo de Sermones
-                  </button>
-                </li>
-                <li>
-                  <button className="text-slate-300 hover:text-[#03346E] transition duration-300 bg-transparent border-none p-0 text-left">
-                    Actualización Semanal
-                  </button>
-                </li>
-              </ul>
-            </div>
+
           </div>
 
           {/* Bottom Footer */}

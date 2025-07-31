@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import OptimizedVideo from './OptimizedVideo';
 
 const HomePage = () => {
@@ -18,6 +19,19 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen font-sans">
+      <Helmet>
+        <title>Obra de Adulam - Iglesia Bautista en Richmond, CA</title>
+        <meta name="description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <meta property="og:title" content="Obra de Adulam - Iglesia Bautista en Richmond, CA" />
+        <meta property="og:description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <meta property="og:image" content="/community.jpg" />
+        <meta property="og:url" content="https://www.obradeadulam.org" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Obra de Adulam - Iglesia Bautista en Richmond, CA" />
+        <meta name="twitter:description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <meta name="twitter:image" content="/community.jpg" />
+      </Helmet>
       {/* Hero Section - Black */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
         {/* Static Background Image - Always visible */}
@@ -76,13 +90,13 @@ const HomePage = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link
               to="/visit"
-              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-10 py-4 font-semibold hover:from-blue-700 hover:to-blue-900 transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-10 py-4 font-semibold hover:from-blue-700 hover:to-blue-900 focus:ring-4 focus:ring-blue-300 focus:outline-none transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Visítanos
             </Link>
             <Link
               to="/about"
-              className="bg-transparent border-2 border-white text-white px-10 py-4 font-semibold hover:bg-white hover:text-black transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="bg-transparent border-2 border-white text-white px-10 py-4 font-semibold hover:bg-white hover:text-black focus:ring-4 focus:ring-white/30 focus:outline-none transition-all duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Conoce Más
             </Link>
@@ -182,103 +196,6 @@ const HomePage = () => {
                 ></iframe>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Upcoming Events Section - White */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            {/* Title and Description - Left Side */}
-            <div className="text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-                <span className="font-light">Próximo</span> <span className="font-bold">Evento</span>
-              </h2>
-              <div className="w-32 h-1 bg-gradient-to-r from-blue-600 to-blue-800 mx-auto md:mx-0 mb-8"></div>
-              <p className="text-gray-700 text-xl leading-relaxed">
-                Únete a nosotros en nuestro próximo evento especial
-              </p>
-            </div>
-            
-            {/* Event Card - Right Side */}
-            <div className="relative overflow-hidden shadow-2xl">
-              <img 
-                src="/Orange and Blue Modern Festive Worship Event Instagram Post.jpg" 
-                alt="Próximo Evento - Visita Apostólica" 
-                className="w-full h-80 object-cover"
-              />
-              
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/60"></div>
-              
-              {/* Content */}
-              <div className="absolute inset-0 p-8 flex items-center">
-                <div className="grid grid-cols-3 gap-6 items-center w-full">
-                  {/* Date */}
-                  <div className="text-center text-white">
-                    <div className="text-4xl font-bold mb-1">26-27</div>
-                    <div className="text-lg font-semibold mb-1">JULIO</div>
-                    <div className="text-sm opacity-90">2025</div>
-                  </div>
-                  
-                  {/* Event Info */}
-                  <div className="col-span-2 text-white">
-                    <h3 className="text-2xl font-bold mb-3">Visita Apostólica</h3>
-                    <p className="text-sm mb-4 leading-relaxed opacity-90">
-                      Una experiencia única de adoración, enseñanza y comunidad. 
-                      Ven y sé parte de este momento especial en nuestra iglesia.
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <div className="flex items-center text-xs bg-white/20 px-2 py-1">
-                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        6:00 PM
-                      </div>
-                      <div className="flex items-center text-xs bg-white/20 px-2 py-1">
-                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        255 16th St
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <Link 
-                        to="/events/visita-apostolica-2025"
-                        className="bg-white text-blue-600 px-4 py-2 font-semibold hover:bg-gray-100 transition-all duration-300 text-center text-sm"
-                      >
-                        Más Info
-                      </Link>
-                      <a 
-                        href="https://maps.google.com/?q=255+16th+St,+Richmond,+CA+94806" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="border border-white text-white px-4 py-2 font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 text-center text-sm"
-                      >
-                        Cómo Llegar
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-6 text-lg">¿No puedes asistir? No te preocupes</p>
-            <Link 
-              to="/events" 
-              className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition duration-300 text-lg"
-            >
-              Ver otros eventos y actividades
-              <svg className="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
           </div>
         </div>
       </section>

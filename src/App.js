@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import CacheManager from './components/CacheManager';
@@ -13,6 +14,7 @@ const PrayerRequestPage = lazy(() => import('./components/PrayerRequestPage'));
 const VisitUsPage = lazy(() => import('./components/VisitUsPage'));
 const EventDetailsPage = lazy(() => import('./components/EventDetailsPage'));
 const EventsListPage = lazy(() => import('./components/EventsListPage'));
+const NotFoundPage = lazy(() => import('./components/NotFoundPage'));
 
 // Loading component with performance monitoring
 const LoadingSpinner = React.memo(() => {
@@ -62,6 +64,20 @@ const AboutPage = React.memo(() => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>Acerca de Obra de Adulam - Nuestras Creencias y Misión</title>
+        <meta name="description" content="Conoce más sobre Obra de Adulam, nuestras creencias fundamentales, misión y visión. Descubre nuestra historia y valores como iglesia cristiana en Richmond, CA." />
+        <meta name="keywords" content="acerca de, iglesia, creencias, misión, visión, Obra de Adulam, Richmond, CA" />
+        <meta property="og:title" content="Acerca de Obra de Adulam - Nuestras Creencias y Misión" />
+        <meta property="og:description" content="Conoce más sobre Obra de Adulam, nuestras creencias fundamentales, misión y visión. Descubre nuestra historia y valores como iglesia cristiana en Richmond, CA." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.obradeadulam.org/about" />
+        <meta property="og:image" content="/Adulam%20Logo.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Acerca de Obra de Adulam - Nuestras Creencias y Misión" />
+        <meta name="twitter:description" content="Conoce más sobre Obra de Adulam, nuestras creencias fundamentales, misión y visión. Descubre nuestra historia y valores como iglesia cristiana en Richmond, CA." />
+        <meta name="twitter:image" content="/Adulam%20Logo.jpg" />
+      </Helmet>
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -143,6 +159,7 @@ const App = React.memo(() => {
               <Route path="/visit" element={<VisitUsPage />} />
               <Route path="/events" element={<EventsListPage />} />
               <Route path="/events/:slug" element={<EventDetailsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
           <CacheManager />

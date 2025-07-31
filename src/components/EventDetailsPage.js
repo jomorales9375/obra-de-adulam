@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const EVENT_DATA = {
   'visita-apostolica-2025': {
@@ -28,6 +29,18 @@ const EventDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans">
+      <Helmet>
+        <title>{event.title} - Eventos</title>
+        <meta name="description" content={`Detalles del evento: ${event.title}`} />
+        <meta property="og:title" content={`${event.title} - Eventos`} />
+        <meta property="og:description" content={`Detalles del evento: ${event.title}`} />
+        <meta property="og:image" content={event.image} />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${event.title} - Eventos`} />
+        <meta name="twitter:description" content={`Detalles del evento: ${event.title}`} />
+        <meta name="twitter:image" content={event.image} />
+      </Helmet>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-[#021526] via-[#03346E] to-[#1e40af] text-white py-10 relative overflow-hidden">
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -51,6 +64,8 @@ const EventDetailsPage = () => {
               />
               <div className="flex-1 text-center md:text-left">
                 <h2 className="text-3xl font-bold text-[#03346E] mb-4">{event.title}</h2>
+                <div className="text-base text-blue-800 font-semibold mb-2">Apostol Andy Zamora</div>
+                <div className="text-base font-semibold text-slate-700 mb-1">Hora de entrada</div>
                 <div className="text-lg text-slate-700 mb-2">{event.date1}</div>
                 <div className="text-lg text-slate-700 mb-2">{event.date2}</div>
                 <div className="text-base text-slate-500 mb-2">{event.address}</div>
@@ -61,7 +76,6 @@ const EventDetailsPage = () => {
                 Prepárate para un fin de semana de bendición, palabra profética y ministración especial con nuestros invitados apostólicos. ¡No te pierdas este tiempo de avivamiento y comunión!
               </p>
               <ul className="list-disc pl-6 mb-4">
-                <li>Palabra profética y enseñanza</li>
                 <li>Adoración en vivo</li>
                 <li>Ministerio para toda la familia</li>
                 <li>Entrada gratuita</li>

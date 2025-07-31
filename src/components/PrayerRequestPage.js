@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import emailjs from '@emailjs/browser';
+import { Helmet } from 'react-helmet';
 import { SECURITY_CONFIG } from '../config/security';
 import { 
   sanitizeInput, 
@@ -189,194 +190,210 @@ const PrayerRequestPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <Helmet>
+        <title>Peticiones de Oración - Envía tu Petición en Línea</title>
+        <meta name="description" content="Envía tus peticiones de oración en línea de forma confidencial. Nuestro equipo de oración orará por ti durante la semana. Estamos aquí para orar contigo." />
+        <meta name="keywords" content="peticiones de oración, oración en línea, oración, oración cristiana, petición de oración, orar" />
+        <meta property="og:title" content="Peticiones de Oración - Envía tu Petición en Línea" />
+        <meta property="og:description" content="Envía tus peticiones de oración en línea de forma confidencial. Nuestro equipo de oración orará por ti durante la semana. Estamos aquí para orar contigo." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.obradeadulam.org/prayer" />
+        <meta property="og:image" content="/Adulam%20Logo.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Peticiones de Oración - Envía tu Petición en Línea" />
+        <meta name="twitter:description" content="Envía tus peticiones de oración en línea de forma confidencial. Nuestro equipo de oración orará por ti durante la semana. Estamos aquí para orar contigo." />
+        <meta name="twitter:image" content="/Adulam%20Logo.jpg" />
+      </Helmet>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20">
-        <div className="container mx-auto px-4 text-center">
+      <section className="bg-gradient-to-r from-[#021526] to-[#021526] text-white py-20 relative overflow-hidden">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Peticiones de Oración</h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            Estamos aquí para orar contigo. Tu petición será tratada con confidencialidad 
-            y será compartida con nuestro equipo de oración dedicado.
+          <div className="w-32 h-1 bg-gradient-to-r from-blue-500 to-blue-700 mx-auto mb-8"></div>
+          <p className="text-xl md:text-2xl text-slate-200 max-w-3xl mx-auto leading-relaxed font-light">
+            Envía tu petición de oración y nuestro equipo orará por ti durante la semana
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12">
-              {/* Prayer Request Form */}
-              <div className="bg-white rounded-lg shadow-xl p-8 md:p-12">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold text-slate-900 mb-4">Envía tu Petición de Oración</h2>
-                  <div className="w-24 h-1 bg-[#03346E] mx-auto mb-6"></div>
-                  <p className="text-slate-700">
-                    Estamos aquí para orar contigo. Tu petición será tratada con confidencialidad 
-                    y será compartida con nuestro equipo de oración.
-                  </p>
-                </div>
+      {/* Prayer Form Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Envía tu Petición</h2>
+            <div className="w-32 h-1 bg-gradient-to-r from-[#03346E] to-[#1e40af] mx-auto mb-8"></div>
+            <p className="text-slate-700 max-w-3xl mx-auto text-lg leading-relaxed">
+              Tu petición será confidencial y nuestro equipo de oración orará por ti durante la semana.
+            </p>
+          </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                        Nombre *
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
-                          errors.name ? 'border-red-500' : 'border-slate-300'
-                        }`}
-                        placeholder="Tu nombre completo"
-                      />
-                      {errors.name && (
-                        <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
-                          errors.email ? 'border-red-500' : 'border-slate-300'
-                        }`}
-                        placeholder="tu@email.com"
-                      />
-                      {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                      )}
-                    </div>
-                  </div>
-
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Prayer Form */}
+            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-slate-200">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Teléfono (opcional)
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Nombre *
                     </label>
                     <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
-                        errors.phone ? 'border-red-500' : 'border-slate-300'
+                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                        errors.name ? 'border-red-500' : 'border-slate-300'
                       }`}
-                      placeholder="(123) 456-7890"
+                      placeholder="Tu nombre completo"
                     />
-                    {errors.phone && (
-                      <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                    {errors.name && (
+                      <p className="text-red-500 text-sm mt-1">{errors.name}</p>
                     )}
                   </div>
-
+                  
                   <div>
-                    <label htmlFor="requestType" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Tipo de Petición *
+                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
+                      Email *
                     </label>
-                    <select
-                      id="requestType"
-                      name="requestType"
-                      value={formData.requestType}
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
-                        errors.requestType ? 'border-red-500' : 'border-slate-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                        errors.email ? 'border-red-500' : 'border-slate-300'
                       }`}
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="salud">Salud</option>
-                      <option value="familia">Familia</option>
-                      <option value="trabajo">Trabajo</option>
-                      <option value="finanzas">Finanzas</option>
-                      <option value="relacion">Relación</option>
-                      <option value="espiritual">Crecimiento Espiritual</option>
-                      <option value="otro">Otro</option>
-                    </select>
-                    {errors.requestType && (
-                      <p className="text-red-500 text-sm mt-1">{errors.requestType}</p>
+                      placeholder="tu@email.com"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                     )}
                   </div>
-
-                  <div>
-                    <label htmlFor="prayerRequest" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Petición de Oración *
-                    </label>
-                    <textarea
-                      id="prayerRequest"
-                      name="prayerRequest"
-                      value={formData.prayerRequest}
-                      onChange={handleChange}
-                      required
-                      rows="6"
-                      className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical ${
-                        errors.prayerRequest ? 'border-red-500' : 'border-slate-300'
-                      }`}
-                      placeholder="Describe tu petición de oración aquí..."
-                    ></textarea>
-                    {errors.prayerRequest && (
-                      <p className="text-red-500 text-sm mt-1">{errors.prayerRequest}</p>
-                    )}
-                  </div>
-
-                  <div className="pt-6">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-[#03346E] text-white py-4 px-6 rounded-md font-semibold hover:bg-[#03346E]/80 disabled:bg-slate-400 disabled:cursor-not-allowed transition duration-300 text-lg"
-                    >
-                      {isSubmitting ? 'Enviando...' : 'Enviar Petición de Oración'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Information Sidebar */}
-              <div className="space-y-8">
-                <div className="bg-[#03346E]/10 rounded-lg p-6 border-l-4 border-[#03346E]">
-                  <h3 className="text-xl font-semibold text-[#021526] mb-4">¿Cómo Funciona?</h3>
-                  <ul className="space-y-3 text-slate-700">
-                    <li className="flex items-start">
-                      <span className="text-[#03346E] mr-2">✓</span>
-                      Tu petición es recibida por nuestro equipo de oración
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-[#03346E] mr-2">✓</span>
-                      Oramos por ti durante la semana
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-[#03346E] mr-2">✓</span>
-                      Te contactamos si proporcionaste información de contacto
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-[#03346E] mr-2">✓</span>
-                      Continuamos orando hasta que veamos respuestas
-                    </li>
-                  </ul>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-[#03346E]">
-                  <h3 className="text-xl font-semibold text-[#021526] mb-4">Versículos de Esperanza</h3>
-                  <div className="space-y-4 text-slate-700">
-                    <blockquote className="italic border-l-4 border-[#03346E] pl-4">
-                      "No se inquieten por nada; más bien, en toda ocasión, con oración y ruego, 
-                      presenten sus peticiones a Dios y denle gracias." - Filipenses 4:6
-                    </blockquote>
-                    <blockquote className="italic border-l-4 border-[#03346E] pl-4">
-                      "Porque donde dos o tres se reúnen en mi nombre, allí estoy yo en medio de ellos." - Mateo 18:20
-                    </blockquote>
-                  </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Teléfono (opcional)
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                      errors.phone ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="(123) 456-7890"
+                  />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="requestType" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Tipo de Petición *
+                  </label>
+                  <select
+                    id="requestType"
+                    name="requestType"
+                    value={formData.requestType}
+                    onChange={handleChange}
+                    required
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 ${
+                      errors.requestType ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                  >
+                    <option value="">Selecciona un tipo de petición</option>
+                    <option value="salud">Salud</option>
+                    <option value="familia">Familia</option>
+                    <option value="trabajo">Trabajo</option>
+                    <option value="finanzas">Finanzas</option>
+                    <option value="espiritual">Espiritual</option>
+                    <option value="otros">Otros</option>
+                  </select>
+                  {errors.requestType && (
+                    <p className="text-red-500 text-sm mt-1">{errors.requestType}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="prayerRequest" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Petición de Oración *
+                  </label>
+                  <textarea
+                    id="prayerRequest"
+                    name="prayerRequest"
+                    value={formData.prayerRequest}
+                    onChange={handleChange}
+                    required
+                    rows="6"
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#03346E] focus:border-transparent transition duration-300 resize-vertical ${
+                      errors.prayerRequest ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="Describe tu petición de oración aquí..."
+                  ></textarea>
+                  {errors.prayerRequest && (
+                    <p className="text-red-500 text-sm mt-1">{errors.prayerRequest}</p>
+                  )}
+                </div>
+
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-[#03346E] to-[#1e40af] text-white px-8 py-4 rounded-xl font-semibold hover:from-[#1e40af] hover:to-[#03346E] disabled:bg-slate-400 disabled:cursor-not-allowed transition duration-300 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    {isSubmitting ? 'Enviando...' : 'Enviar Petición de Oración'}
+                  </button>
+                </div>
+
+                <div className="text-center mt-8">
+                  <blockquote className="text-slate-600 italic text-lg">
+                    "Porque donde dos o tres se reúnen en mi nombre, allí estoy yo en medio de ellos." - Mateo 18:20
+                  </blockquote>
+                </div>
+              </form>
+            </div>
+
+            {/* Information Sidebar */}
+            <div className="space-y-8">
+              <div className="bg-[#03346E]/10 rounded-lg p-6 border-l-4 border-[#03346E]">
+                <h3 className="text-xl font-semibold text-[#021526] mb-4">¿Cómo Funciona?</h3>
+                <ul className="space-y-3 text-slate-700">
+                  <li className="flex items-start">
+                    <span className="text-[#03346E] mr-2">✓</span>
+                    Tu petición es recibida por nuestro equipo de oración
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#03346E] mr-2">✓</span>
+                    Oramos por ti durante la semana
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#03346E] mr-2">✓</span>
+                    Te contactamos si proporcionaste información de contacto
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-[#03346E] mr-2">✓</span>
+                    Continuamos orando hasta que veamos respuestas
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-[#03346E]">
+                <h3 className="text-xl font-semibold text-[#021526] mb-4">Versículos de Esperanza</h3>
+                <div className="space-y-4 text-slate-700">
+                  <blockquote className="italic border-l-4 border-[#03346E] pl-4">
+                    "No se inquieten por nada; más bien, en toda ocasión, con oración y ruego, 
+                    presenten sus peticiones a Dios y denle gracias." - Filipenses 4:6
+                  </blockquote>
+                  <blockquote className="italic border-l-4 border-[#03346E] pl-4">
+                    "Porque donde dos o tres se reúnen en mi nombre, allí estoy yo en medio de ellos." - Mateo 18:20
+                  </blockquote>
                 </div>
               </div>
             </div>
@@ -385,26 +402,20 @@ const PrayerRequestPage = () => {
       </section>
 
       {/* Contact Information */}
-      <section className="py-16 bg-[#021526] text-white">
+      <section className="py-20 bg-[#021526] text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">¿Necesitas Hablar con Alguien?</h2>
+          <h2 className="text-3xl font-bold mb-6">Únete a Nuestra Comunidad</h2>
           <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
-            Si necesitas hablar con alguien en persona o tienes una emergencia, 
-            no dudes en contactarnos directamente.
+            Te invitamos a visitarnos y ser parte de nuestra comunidad. 
+            Estamos aquí para recibirte con los brazos abiertos.
           </p>
           <div className="space-y-4 md:space-y-0 md:space-x-6 md:flex md:justify-center">
             <Link
               to="/visit"
-              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-md font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
+              className="inline-block bg-[#03346E] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#03346E]/80 transition duration-300 text-lg"
             >
               Visítanos
             </Link>
-            <a 
-              href="mailto:pastor@obradeadulam.org?subject=Consulta%20Pastoral&body=Hola,%20me%20gustaría%20hablar%20con%20usted%20sobre%20un%20asunto%20importante.%0A%0AGracias."
-              className="inline-block bg-transparent text-white border-2 border-white px-8 py-4 rounded-md font-semibold hover:bg-white hover:text-[#021526] transition duration-300 text-lg"
-            >
-              Enviar Email
-            </a>
           </div>
         </div>
       </section>
