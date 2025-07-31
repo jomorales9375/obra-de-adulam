@@ -237,7 +237,7 @@ const Layout = ({ children }) => {
           {/* Bottom Footer */}
           <div className="border-t border-slate-700 mt-8 pt-8 text-center">
             <p className="text-slate-400">
-              Copyright 2024 Obra de Adulam. Todos los derechos reservados.
+              Copyright 2025 Obra de Adulam. Todos los derechos reservados.
             </p>
           </div>
         </div>
