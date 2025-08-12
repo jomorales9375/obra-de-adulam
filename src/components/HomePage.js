@@ -20,16 +20,16 @@ const HomePage = () => {
   return (
     <div className="min-h-screen font-sans">
       <Helmet>
-        <title>Obra de Adulam - Iglesia Bautista en Richmond, CA</title>
-        <meta name="description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
-        <meta property="og:title" content="Obra de Adulam - Iglesia Bautista en Richmond, CA" />
-        <meta property="og:description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <title>Obra de Adulam - Ministerios Sobre El Final De Los Tiempos</title>
+        <meta name="description" content="Descubre la historia de Obra de Adulam, una iglesia en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <meta property="og:title" content="Obra de Adulam - Ministerios Sobre El Final De Los Tiempos" />
+        <meta property="og:description" content="Descubre la historia de Obra de Adulam, una iglesia en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
         <meta property="og:image" content="/community.jpg" />
         <meta property="og:url" content="https://www.obradeadulam.org" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Obra de Adulam - Iglesia Bautista en Richmond, CA" />
-        <meta name="twitter:description" content="Descubre la historia de Obra de Adulam, una iglesia bautista en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
+        <meta name="twitter:title" content="Obra de Adulam - Ministerios Sobre El Final De Los Tiempos" />
+        <meta name="twitter:description" content="Descubre la historia de Obra de Adulam, una iglesia en Richmond, CA, que cree en el poder transformador del evangelio de Jesucristo. Únete a nuestra comunidad para adoración, enseñanza y crecimiento." />
         <meta name="twitter:image" content="/community.jpg" />
       </Helmet>
       {/* Hero Section - Black */}
