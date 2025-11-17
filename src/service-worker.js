@@ -2,7 +2,7 @@
 
 // Enhanced Service Worker for Obra de Adulam
 // Advanced caching strategies and performance optimizations
-// Version: 1.3.0 - Added cache busting and version management
+// Version: 1.5.0 - Updated cache version to clear old title cache
 
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
@@ -14,7 +14,7 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 clientsClaim();
 
 // Cache version for busting - increment this when deploying major updates
-const CACHE_VERSION = 'v1.4.0';
+const CACHE_VERSION = 'v1.5.0';
 const CACHE_NAMES = {
   images: `images-${CACHE_VERSION}`,
   videos: `videos-${CACHE_VERSION}`,
